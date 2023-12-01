@@ -1,7 +1,7 @@
 import React from 'react';
-import '../css/header.css';
+import '../css/header.css'
 
-const Header = () => {
+function Header(){
   return (
     <div className="header">
       <div className="app-name">Knowledge Space Theory Platform</div>

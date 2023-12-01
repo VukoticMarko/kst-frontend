@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/sidebar.css';
 
-const Sidebar = () => {
+function Sidebar(){
   return (
     <div className="sidebar">
       <a href="#">Button 1</a>

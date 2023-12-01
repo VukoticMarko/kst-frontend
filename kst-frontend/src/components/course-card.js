@@ -2,7 +2,7 @@ import React from 'react';
 import '../css/course-card.css';
 import { handleRectangleClick } from '../api/course-card-api';
 
-const CourseCard = ({ color, title }) => {
+function CourseCard({ color, title }){
     const onClick = () => {
         handleRectangleClick(1); 
       };
