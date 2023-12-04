@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import Header from '../header';
+import  "../../css/login.css";
+import { useNavigate } from 'react-router-dom';
 
+function Login() {
 
-const Login = () => {
+  const navigation = useNavigate()
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -31,29 +35,42 @@ const Login = () => {
     }
   };
 
+  const goBack = () => {
+      navigation("/")
+  }
+
   return (
     <div>
-    <Header></Header>
-      <h2>Login</h2>
-      <div>
-        <label htmlFor="username">Username:</label>
-        <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <button onClick={handleLogin}>Login</button>
+      <Header></Header>
+      <div id='login-container'>
+        <div>
+            <label htmlFor="username"><b>Username:</b></label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Enter Username"
+              value={username}
+              required
+              onChange={(e) => setUsername(e.target.value)}
+            />
+        </div>
+        <div>
+            <label htmlFor="password"><b>Password:</b></label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter Password"
+              value={password}
+              required
+              onChange={(e) => setPassword(e.target.value)}
+            />
+        </div>
+          <button onClick={handleLogin}>Login</button>
+        <div className="container-bottom">
+            <button type="button" className="cancelbtn" onClick={goBack}>Cancel</button>
+            <span className="psw"><a href="#">Forgot password?</a></span>
+        </div>
+      </div>     
     </div>
   );
 };

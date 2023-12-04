@@ -15,6 +15,8 @@
   
   .login-button {
     padding: 8px 16px;
+    height: 40px;
+    width: 80px;
     font-size: 16px;
     background-color: white;
     color: #4CAF50; 
