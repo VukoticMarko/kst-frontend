@@ -1,7 +1,12 @@
 import React, { useEffect } from 'react';
 import '../css/sidebar.css';
+import AccountImage from '../images/account.png';
+import CoursesImage from '../images/courses.png';
+import { useNavigate } from 'react-router-dom';
 
 function Sidebar(){
+
+const navigate = useNavigate()
 
 useEffect(() => {
     const handleScroll = () => {
@@ -15,10 +20,22 @@ useEffect(() => {
     };
     }, []);
 
+  const goToAccountPage = () => {
+    navigate("/account")
+  }
+
+  const goToCoursesPage = () => {
+    navigate("/courses")
+  }
+
   return (
     <div className="sidebar">
-      <a href="#">Button 1</a>
-      <a href="#">Button 2</a>
+      <div onClick={goToAccountPage}>
+        <img style={{cursor: 'pointer'}} src={AccountImage} />
+      </div>
+      <div onClick={goToCoursesPage}>
+        <img style={{cursor: 'pointer'}} src={CoursesImage} />
+      </div>
     </div>
   );
 };
