@@ -9,6 +9,8 @@ import { handleRectangleClick } from './api/course-card-api';
 import LoginButton from './components/login/login-button';
 import TestCard from './components/test-card';
 import TestIntroduction from './components/test-intro';
+import LogoutButton from './components/login/logout-button';
+import Account from './components/account';
 
 function App() {
 
@@ -26,14 +28,13 @@ function App() {
                   <LoginButton />
               </Header>
               <Sidebar />
-             
             </div>
           }
         />
         <Route path='/courses' element={
           <div>
             <Header> 
-                <LoginButton />
+                <LogoutButton />
             </Header>
             <Sidebar />
             <div className="content">
@@ -51,7 +52,7 @@ function App() {
         />
         <Route path='/tests' element={
           <div>
-            <Header /> 
+            <Header><LogoutButton/></Header> 
             <Sidebar />
             <div className="content">
               <TestCard color="#4CAF50" title="Test Algebre" />
@@ -64,6 +65,20 @@ function App() {
          <Route path='/testIntroduction' element={
           <div>
             <TestIntroduction/>
+          </div>
+            
+          }
+        />
+        <Route path='/account' element={
+          
+          <div>
+            <div>
+              <Header> 
+                  <LogoutButton />
+              </Header>
+              <Sidebar />
+            <Account name="Marko" surname="Vukotic" college="FTN" />
+            </div>
           </div>
             
           }
