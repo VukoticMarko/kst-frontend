@@ -1,5 +1,5 @@
 import React from 'react';
-import  "../css/test-intro.css";
+import  "./test-intro.css";
 import { useNavigate } from 'react-router-dom';
 
 function TestIntroduction() {

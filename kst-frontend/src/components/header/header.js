@@ -1,6 +1,6 @@
 import React from 'react';
-import logo from "../images/randomLogo.png"
-import '../css/header.css'
+import logo from "../../images/randomLogo.png"
+import './header.css'
 import { useNavigate } from 'react-router-dom';
 
 function Header( {children} ){

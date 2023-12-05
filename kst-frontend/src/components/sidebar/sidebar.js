@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import '../css/sidebar.css';
-import AccountImage from '../images/account.png';
-import CoursesImage from '../images/courses.png';
+import './sidebar.css';
+import AccountImage from '../../images/account.png';
+import CoursesImage from '../../images/courses.png';
 import { useNavigate } from 'react-router-dom';
 
 function Sidebar(){

@@ -1,6 +1,6 @@
 import React from 'react';
-import '../css/course-card.css';
-import { handleRectangleClick } from '../api/course-card-api';
+import '../course-card/course-card.css';
+import { handleRectangleClick } from '../../api/course-card-api';
 import { useNavigate } from 'react-router-dom';
 
 function TestCard({ color, title }){
