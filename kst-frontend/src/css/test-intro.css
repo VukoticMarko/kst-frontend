@@ -1,0 +1,55 @@
+button {
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    margin-top: 50px;
+    width: 650px;
+  }
+
+#intro-text {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+#intro-container {
+
+    height: 600px;
+    width: 700px;
+    margin-top: 65px;
+    margin-left: 25%;
+    background-color:#413b3b30;
+
+}
+
+.container-bottom {
+    margin-top: 175px;
+    padding: 16px;
+    background-color:#f1f1f1;
+    height: 115px;
+    width: 650px;
+    margin-left: 25px;
+    position: relative;
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+.cancelbtn {
+    position: absolute;
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+    float: left;
+    top: 0px;
+    left: 10px;
+}

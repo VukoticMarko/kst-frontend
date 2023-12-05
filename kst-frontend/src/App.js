@@ -7,6 +7,8 @@ import CourseCard from './components/course-card';
 import Login from './components/login/login';
 import { handleRectangleClick } from './api/course-card-api';
 import LoginButton from './components/login/login-button';
+import TestCard from './components/test-card';
+import TestIntroduction from './components/test-intro';
 
 function App() {
 
@@ -43,6 +45,25 @@ function App() {
               <CourseCard color="#FFCCE5" title="Rectangle 6" />
               <CourseCard color="#606060" title="Rectangle 7" />
             </div>
+          </div>
+            
+          }
+        />
+        <Route path='/tests' element={
+          <div>
+            <Header /> 
+            <Sidebar />
+            <div className="content">
+              <TestCard color="#4CAF50" title="Test Algebre" />
+              <TestCard color="#2196F3" title="Kolokvijum Osnova Programiranja" />
+            </div>
+          </div>
+            
+          }
+        />
+         <Route path='/testIntroduction' element={
+          <div>
+            <TestIntroduction/>
           </div>
             
           }

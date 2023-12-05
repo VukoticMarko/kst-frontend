@@ -3,18 +3,18 @@ import '../css/course-card.css';
 import { handleRectangleClick } from '../api/course-card-api';
 import { useNavigate } from 'react-router-dom';
 
-function CourseCard({ color, title }){
+function TestCard({ color, title }){
 
-  const navigate = useNavigate()
+    const navigate = useNavigate() 
 
-    const EnterCourse = () => {
-        navigate("/tests")
+    const EnterTest = () => {
+        navigate("/testIntroduction")
       };
 
   return (
 
 
-    <div className="container" style={{ maxWidth: "400px", position: "left", cursor: 'pointer', margin: "7px"}} onClick={EnterCourse}>
+    <div className="container" style={{ maxWidth: "400px", position: "left", cursor: 'pointer', margin: "7px"}} onClick={EnterTest}>
       <section className="section" style={{ padding: "15px"}}>
         <div className="columns">
           <div className="column">
@@ -30,7 +30,7 @@ function CourseCard({ color, title }){
                     <p className="title is-4">{title}</p>
                   </div>
                 </div>
-                <div onClick={EnterCourse}>
+                <div onClick={EnterTest}>
                   <p style={{ textAlign: 'left' }}>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Phasellus nec iaculis mauris. <a>@bulmaio</a>.
@@ -48,4 +48,4 @@ function CourseCard({ color, title }){
   );
 };
 
-export default CourseCard;
+export default TestCard;
