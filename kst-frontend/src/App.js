@@ -27,7 +27,7 @@ function App() {
               <Header> 
                   <LoginButton />
               </Header>
-              <Sidebar />
+              <div className='hs-image'> <img src={require('./images/hs.jpg')} style={{ marginLeft: "20px"}} alt='Home Screen Image'/></div>
             </div>
           }
         />
@@ -80,7 +80,6 @@ function App() {
             <Account name="Marko" surname="Vukotic" college="FTN" />
             </div>
           </div>
-            
           }
         />
       </Routes>
