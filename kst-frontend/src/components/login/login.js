@@ -12,6 +12,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
+      navigation("/courses")
       // Make a request to your backend for authentication
       const response = await fetch('http://your-backend-api-url/login', {
         method: 'POST',
