@@ -1,0 +1,40 @@
+/* Test.css */
+
+.question-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .question {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .answer-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .answer {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  
+    &.selected {
+      background-color: #3498db;
+      color: #fff;
+      border-color: #3498db;
+    }
+  }
+  

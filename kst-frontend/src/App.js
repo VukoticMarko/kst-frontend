@@ -9,8 +9,12 @@ import { handleRectangleClick } from './api/course-card-api';
 import LoginButton from './components/login/login-button';
 import TestCard from './components/test/test-card';
 import TestIntroduction from './components/test/test-intro';
+import Test4Option from './components/test/test-4-option';
 import LogoutButton from './components/login/logout-button';
 import Account from './components/account/account';
+import KnowledgeGraph from './components/knowledge-graph/knowledge-graph';
+import TestText from './components/test/test-text';
+import TestFooter from './components/test/test-footer';
 
 function App() {
 
@@ -19,6 +23,14 @@ function App() {
 
     <Router>
       <Routes>
+          <Route path='/kg' element={<KnowledgeGraph></KnowledgeGraph>} />
+          <Route path='/test' element={
+          <div>
+          <Header/>
+          <Test4Option /> <TestText />
+          <TestFooter/>
+          </div>
+          } />          
           <Route path="/login" element={<Login />} />
           <Route
           path="/"
