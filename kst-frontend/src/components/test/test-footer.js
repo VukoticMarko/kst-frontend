@@ -10,7 +10,7 @@ function TestFooter({ onSubmit }) {
 
   const handleConfirm = () => {
     setShowConfirmation(false);
-    onSubmit(); // Call the onSubmit function passed as a prop
+    //onSubmit(); 
   };
 
   const handleCancel = () => {

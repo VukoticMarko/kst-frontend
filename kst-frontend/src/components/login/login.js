@@ -12,9 +12,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      navigation("/courses")
-      // Make a request to your backend for authentication
-      const response = await fetch('http://your-backend-api-url/login', {
+      const response = await fetch('http://localhost:4000/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,12 +21,11 @@ function Login() {
       });
 
       if (response.ok) {
-        // Handle successful login, e.g., store the token in local storage
         const data = await response.json();
         localStorage.setItem('token', data.token);
         console.log('Login successful!');
+        navigation("/courses")
       } else {
-        // Handle unsuccessful login
         console.error('Login failed');
       }
     } catch (error) {

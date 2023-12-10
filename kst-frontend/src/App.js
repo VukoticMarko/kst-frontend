@@ -15,6 +15,7 @@ import Account from './components/account/account';
 import KnowledgeGraph from './components/knowledge-graph/knowledge-graph';
 import TestText from './components/test/test-text';
 import TestFooter from './components/test/test-footer';
+import CourseList from './components/course-card/course-list';
 
 function App() {
 
@@ -50,13 +51,7 @@ function App() {
             </Header>
             <Sidebar />
             <div className="content">
-              <CourseCard color="#4CAF50" title="Rectangle 1" />
-              <CourseCard color="#2196F3" title="Rectangle 2" />
-              <CourseCard color="#FFC107" title="Rectangle 3" />
-              <CourseCard color="#E91E63" title="Rectangle 4" />
-              <CourseCard color="#CCFFE5" title="Rectangle 5" />
-              <CourseCard color="#FFCCE5" title="Rectangle 6" />
-              <CourseCard color="#606060" title="Rectangle 7" />
+              <CourseList />
             </div>
           </div>
             
