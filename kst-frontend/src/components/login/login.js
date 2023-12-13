@@ -19,7 +19,6 @@ function Login({setAccessToken}) {
         },
         body: JSON.stringify({ email, password }),
       });
-      console.log(response.data);
 
       if (response.ok) {
         const data = await response.json();

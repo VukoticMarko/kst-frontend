@@ -56,7 +56,7 @@ function App() {
             </Header>
             <Sidebar />
             <div className="content">
-              <CourseList accessToken={accessToken}/>
+              <CourseList/>
             </div>
           </div>
             
