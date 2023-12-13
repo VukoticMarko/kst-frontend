@@ -16,8 +16,12 @@ import KnowledgeGraph from './components/knowledge-graph/knowledge-graph';
 import TestText from './components/test/test-text';
 import TestFooter from './components/test/test-footer';
 import CourseList from './components/course-card/course-list';
+import CreateTest from './components/create-test/create-test';
+import { useState } from 'react';
 
 function App() {
+
+  const [accessToken, setAccessToken] = useState('')
 
   return (
     <div className="App">
@@ -25,6 +29,7 @@ function App() {
     <Router>
       <Routes>
           <Route path='/kg' element={<KnowledgeGraph></KnowledgeGraph>} />
+          <Route path='/createTest' element={<CreateTest/>} />
           <Route path='/test' element={
           <div>
           <Header/>
@@ -32,7 +37,7 @@ function App() {
           <TestFooter/>
           </div>
           } />          
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login setAccessToken={setAccessToken}/>} />
           <Route
           path="/"
           element={
@@ -51,7 +56,7 @@ function App() {
             </Header>
             <Sidebar />
             <div className="content">
-              <CourseList />
+              <CourseList accessToken={accessToken}/>
             </div>
           </div>
             

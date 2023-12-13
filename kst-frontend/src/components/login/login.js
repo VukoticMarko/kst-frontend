@@ -3,28 +3,31 @@ import Header from '../header/header';
 import  "./login.css";
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function Login({setAccessToken}) {
 
   const navigation = useNavigate()
 
-  const [username, setUsername] = useState('');
+  const [email, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://localhost:4000/auth/login', {
+      const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
+      console.log(response.data);
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('accessToken', data.accessToken);
         console.log('Login successful!');
+        setAccessToken(data.accessToken)
         navigation("/courses")
+
       } else {
         console.error('Login failed');
       }
@@ -42,12 +45,12 @@ function Login() {
       <Header></Header>
       <div id='login-container'>
         <div>
-            <label htmlFor="username"><b>Username:</b></label>
+            <label htmlFor="username"><b>Email:</b></label>
             <input
               type="text"
               id="username"
               placeholder="Enter Username"
-              value={username}
+              value={email}
               required
               onChange={(e) => setUsername(e.target.value)}
             />
