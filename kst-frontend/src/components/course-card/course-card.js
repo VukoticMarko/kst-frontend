@@ -5,16 +5,14 @@ import { useNavigate } from 'react-router-dom';
 function CourseCard({ id, title }){
 
   const navigate = useNavigate()
+  const [courseId, setCourseId] = useState(id);
   const accessToken = localStorage.getItem('accessToken')
 
-    const EnterCourse = (id) => {
-      // Add logic to send id to test-card
-      navigate("/tests")
+    const EnterCourse = () => {
+      navigate(`/tests/`+courseId)
       };
 
   return (
-
-
     <div key={id} className="container" style={{ maxWidth: "400px", position: "left", cursor: 'pointer', margin: "7px"}} onClick={EnterCourse}>
       <section className="section" style={{ padding: "15px"}}>
         <div className="columns">
@@ -34,7 +32,7 @@ function CourseCard({ id, title }){
                 <div onClick={EnterCourse}>
                   <p style={{ textAlign: 'left' }}>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Phasellus nec iaculis mauris. <a>@bulmaio</a>.
+                    Phasellus id: { courseId } nec iaculis mauris. <a>@bulmaio</a>.
                     <a href="#">#css</a> <a href="#">#responsive</a>
                   </p>
                   <time dateTime="2016-1-1">11:09 PM - 1 Jan 2016</time>

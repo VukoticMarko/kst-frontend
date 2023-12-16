@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import TestCard from './test-card'; 
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-function TestList(){
+function TestList( ){
 
   const [tests, setTests] = useState([]);
-  const [course, setCourse] = useState('') // Course that tests belong to
+  const {courseId} = useParams()
   const accessToken = localStorage.getItem('accessToken')
-
-  const setCourseId = () => {
-    setCourse(localStorage.getItem('temporaryCourseID'))
-    console.log(localStorage.getItem('temporaryCourseID'))
-    //localStorage.removeItem('temporaryCourseID')
-  }
 
   useEffect(() => {
     const fetchData = async () => {
         try {
-          const response = await axios.get('http://localhost:3000/{' + course + '}/tests', {
+          console.log(courseId)
+          const response = await axios.get(`http://localhost:3000/courses/${courseId}/tests`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
@@ -26,15 +22,14 @@ function TestList(){
   
           const data = response.data;
           const testArray = Array.isArray(data) ? data : data.tests || [];
-          console.log('Did not fail')
           setTests(testArray);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       };
-    setCourseId();
+    console.log("Getting tests")
     fetchData();
-  }, [accessToken, course]);
+  }, [accessToken]);
 
   return (
     <div className="content">

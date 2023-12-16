@@ -62,7 +62,7 @@ function App() {
             
           }
         />
-        <Route path='/tests' element={
+        <Route path='/tests/:courseId' element={
           <div>
             <Header><LogoutButton/></Header> 
             <Sidebar />
