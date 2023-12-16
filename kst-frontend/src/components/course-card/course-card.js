@@ -1,20 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './course-card.css';
-import { handleRectangleClick } from '../../api/course-card-api';
 import { useNavigate } from 'react-router-dom';
 
-function CourseCard({ key, title }){
+function CourseCard({ id, title }){
 
   const navigate = useNavigate()
+  const accessToken = localStorage.getItem('accessToken')
 
-    const EnterCourse = () => {
-        navigate("/tests")
+    const EnterCourse = (id) => {
+      // Add logic to send id to test-card
+      navigate("/tests")
       };
 
   return (
 
 
-    <div key={key} className="container" style={{ maxWidth: "400px", position: "left", cursor: 'pointer', margin: "7px"}} onClick={EnterCourse}>
+    <div key={id} className="container" style={{ maxWidth: "400px", position: "left", cursor: 'pointer', margin: "7px"}} onClick={EnterCourse}>
       <section className="section" style={{ padding: "15px"}}>
         <div className="columns">
           <div className="column">

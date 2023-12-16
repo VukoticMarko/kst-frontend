@@ -3,6 +3,8 @@ import React from "react";
 
 function Account( { name, surname, college }) {
 
+    const accessToken = localStorage.getItem('accessToken')
+
     return (
 
         <div className="account-container">

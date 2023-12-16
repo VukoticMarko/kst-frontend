@@ -1,9 +1,8 @@
 import React from 'react';
 import '../course-card/course-card.css';
-import { handleRectangleClick } from '../../api/course-card-api';
 import { useNavigate } from 'react-router-dom';
 
-function TestCard({ color, title }){
+function TestCard({ id, title }){
 
     const navigate = useNavigate() 
 
@@ -14,7 +13,7 @@ function TestCard({ color, title }){
   return (
 
 
-    <div className="container" style={{ maxWidth: "400px", position: "left", cursor: 'pointer', margin: "7px"}} onClick={EnterTest}>
+    <div className="container" key={id} style={{ maxWidth: "400px", position: "left", cursor: 'pointer', margin: "7px"}} onClick={EnterTest}>
       <section className="section" style={{ padding: "15px"}}>
         <div className="columns">
           <div className="column">

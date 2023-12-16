@@ -5,7 +5,6 @@ import Sidebar from './components/sidebar/sidebar';
 import Header from './components/header/header';
 import CourseCard from './components/course-card/course-card';
 import Login from './components/login/login';
-import { handleRectangleClick } from './api/course-card-api';
 import LoginButton from './components/login/login-button';
 import TestCard from './components/test/test-card';
 import TestIntroduction from './components/test/test-intro';
@@ -18,6 +17,7 @@ import TestFooter from './components/test/test-footer';
 import CourseList from './components/course-card/course-list';
 import CreateTest from './components/create-test/create-test';
 import { useState } from 'react';
+import TestList from './components/test/test-list';
 
 function App() {
 
@@ -67,8 +67,7 @@ function App() {
             <Header><LogoutButton/></Header> 
             <Sidebar />
             <div className="content">
-              <TestCard color="#4CAF50" title="Test Algebre" />
-              <TestCard color="#2196F3" title="Kolokvijum Osnova Programiranja" />
+              <TestList/>
             </div>
           </div>
             

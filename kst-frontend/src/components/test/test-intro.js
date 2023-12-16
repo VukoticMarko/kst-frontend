@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function TestIntroduction() {
 
   const navigation = useNavigate()
+  const accessToken = localStorage.getItem('accessToken')
   
   const startTest = () => {
     navigation("/test")
