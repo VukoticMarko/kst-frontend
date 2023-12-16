@@ -8,8 +8,6 @@ function TestCard({ id, title, time, courseId }){
     const [testId, setTestId] = useState(id);
 
     const EnterTest = () => {
-      console.log(courseId)
-      console.log(testId)
         navigate(`/testIntroduction/${courseId}/${testId}`)
       };
 

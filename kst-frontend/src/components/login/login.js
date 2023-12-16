@@ -23,7 +23,6 @@ function Login({setAccessToken}) {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('accessToken', data.accessToken);
-        console.log('Login successful!');
         setAccessToken(data.accessToken)
         navigation("/courses")
 
