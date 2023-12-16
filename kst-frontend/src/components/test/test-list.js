@@ -3,7 +3,7 @@ import TestCard from './test-card';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
-function TestList( ){
+function TestList(){
 
   const [tests, setTests] = useState([]);
   const {courseId} = useParams()
@@ -12,7 +12,6 @@ function TestList( ){
   useEffect(() => {
     const fetchData = async () => {
         try {
-          console.log(courseId)
           const response = await axios.get(`http://localhost:3000/courses/${courseId}/tests`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -27,14 +26,13 @@ function TestList( ){
           console.error('Error fetching data:', error);
         }
       };
-    console.log("Getting tests")
     fetchData();
-  }, [accessToken]);
+  }, [accessToken, courseId]);
 
   return (
     <div className="content">
       {tests.map((test) => (
-        <TestCard key={test.id} title={test.title} />
+        <TestCard key={test.id} id={test.id} title={test.title} time={test.createdAt} courseId={courseId} />
       ))}
     </div>
   );

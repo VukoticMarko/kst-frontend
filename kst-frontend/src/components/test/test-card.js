@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../course-card/course-card.css';
 import { useNavigate } from 'react-router-dom';
 
-function TestCard({ id, title }){
+function TestCard({ id, title, time, courseId }){
 
     const navigate = useNavigate() 
+    const [testId, setTestId] = useState(id);
 
     const EnterTest = () => {
-        navigate("/testIntroduction")
+      console.log(courseId)
+      console.log(testId)
+        navigate(`/testIntroduction/${courseId}/${testId}`)
       };
+
+    const date = new Date(time);
+
+    const options = {
+      hour: "numeric",
+      minute: "numeric",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    };
+      
+    const formattedDate = new Intl.DateTimeFormat("en-US", options).format(date);
 
   return (
 
@@ -35,7 +50,7 @@ function TestCard({ id, title }){
                     Phasellus nec iaculis mauris. <a>@bulmaio</a>.
                     <a href="#">#css</a> <a href="#">#responsive</a>
                   </p>
-                  <time dateTime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                  <time dateTime="2016-1-1">{formattedDate}</time>
                 </div>
               </div>
             </div>

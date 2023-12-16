@@ -30,7 +30,7 @@ function App() {
       <Routes>
           <Route path='/kg' element={<KnowledgeGraph></KnowledgeGraph>} />
           <Route path='/createTest' element={<CreateTest/>} />
-          <Route path='/test' element={
+          <Route path='/test/:testId' element={
           <div>
           <Header/>
           <Test4Option /> <TestText />
@@ -73,7 +73,7 @@ function App() {
             
           }
         />
-         <Route path='/testIntroduction' element={
+         <Route path='/testIntroduction/:courseId/:testId' element={
           <div>
             <TestIntroduction/>
           </div>

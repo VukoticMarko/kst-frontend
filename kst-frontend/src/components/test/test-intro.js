@@ -1,17 +1,18 @@
 import React from 'react';
 import  "./test-intro.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function TestIntroduction() {
 
   const navigation = useNavigate()
+  const {courseId, testId} = useParams()
   const accessToken = localStorage.getItem('accessToken')
   
   const startTest = () => {
-    navigation("/test")
+    navigation(`/test/${testId}`)
   }
   const goBack = () => {
-      navigation("/tests")
+      navigation(`/tests/${courseId}`)
   }
 
   return (
