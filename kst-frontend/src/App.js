@@ -18,6 +18,7 @@ import CourseList from './components/course-card/course-list';
 import CreateTest from './components/create-test/create-test';
 import { useState } from 'react';
 import TestList from './components/test/test-list';
+import TestWrapper from './components/test/test-wrapper';
 
 function App() {
 
@@ -33,8 +34,7 @@ function App() {
           <Route path='/test/:testId' element={
           <div>
           <Header/>
-          <Test4Option /> <TestText />
-          <TestFooter/>
+          <TestWrapper />
           </div>
           } />          
           <Route path="/login" element={<Login setAccessToken={setAccessToken}/>} />
@@ -81,7 +81,6 @@ function App() {
           }
         />
         <Route path='/account' element={
-          
           <div>
             <div>
               <Header> 
