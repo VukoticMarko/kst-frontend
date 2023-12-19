@@ -8,7 +8,7 @@ import Login from './components/login/login';
 import LoginButton from './components/login/login-button';
 import TestCard from './components/test/test-card';
 import TestIntroduction from './components/test/test-intro';
-import Test4Option from './components/test/test-4-option';
+import Test4Option from './components/test/test-option';
 import LogoutButton from './components/login/logout-button';
 import Account from './components/account/account';
 import KnowledgeGraph from './components/knowledge-graph/knowledge-graph';

@@ -8,17 +8,20 @@ function Sidebar(){
 
 const navigate = useNavigate()
 
-useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
-        const headerHeight = document.querySelector('.header').offsetHeight;
-        document.querySelector('.sidebar').style.marginTop = `${headerHeight}px`;
+        const headerElement = document.querySelector('.header-main');
+        if (headerElement) {
+            const headerHeight = headerElement.offsetHeight;
+            document.querySelector('.sidebar').style.marginTop = `${headerHeight}px`;
+        }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => {
         window.removeEventListener('scroll', handleScroll);
     };
-    }, []);
+  }, []);
 
   const goToAccountPage = () => {
     navigate("/account")

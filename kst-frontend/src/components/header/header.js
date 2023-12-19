@@ -11,7 +11,7 @@ function Header( {children} ){
   }
 
   return (
-    <div className="header">
+    <div className="header-main">
         <div>
             <img src={logo} alt='Placeholder image' 
             style={{ height: "38px", width: "38px", cursor: "pointer"}}

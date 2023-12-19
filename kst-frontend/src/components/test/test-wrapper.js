@@ -1,17 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import TestCard from './test-card'; 
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import Test4Option from './test-4-option';
+import { useNavigate, useParams } from 'react-router-dom';
+import TestOption from './test-option';
 import './test.css';
-import Header from '../header/header';
 import TestFooter from './test-footer';
 
 function TestWrapper(){
 
+    const navigate = useNavigate()
     const [questions, setQuestions] = useState([])
     const {testId} = useParams()
     const accessToken = localStorage.getItem('accessToken')
+    const [studentAnswers, setStudentAnswers] = useState([]) // For backend
+
+    const handleAnswerSelection = (newAnswer) => {
+
+        const updatedAnswers = studentAnswers.map((answer) =>
+          answer.question_id === newAnswer.question_id ? newAnswer : answer
+        );
+      
+        if (!updatedAnswers.some((answer) => answer.question_id === newAnswer.question_id)) {
+          updatedAnswers.push(newAnswer);
+        }
+        setStudentAnswers(updatedAnswers);
+    };
+
+    const handleSubmitButton = () => {
+        let title = "temp"
+        let test_id = parseInt(testId)
+        const object = {
+            'title': title,
+            'test_id': test_id,
+            'studentAnswers': studentAnswers
+        }
+        console.log(object)
+        const postData = async () => {
+            try {
+              const response = await axios.post(
+                `http://localhost:3000/student-tests`,
+                object,
+                {
+                    headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    },
+                },
+              );
+              console.log(response)
+            } catch (error) {
+                if (error.response?.data && error.response.data.message === 'All questions from test should be answered') {
+                    alert('All questions from test should be answered!');
+                  } else {
+                    console.error('Error details:', error.response?.data || error.message);
+                }
+                console.error('Error posting data:', error.response?.data || error.message);
+            }
+          };
+        postData();
+        navigate('/courses')
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,14 +84,15 @@ function TestWrapper(){
         <div>
             <div className='test-container'>
                 {questions.map((question) => (
-                <Test4Option 
+                <TestOption 
                 key={question.id} 
                 qId={question.id}
-                answers={question.answers}
-                text={question.text}/>
+                options={question.answers}
+                text={question.text}
+                onAnswerSelection={handleAnswerSelection}/>
                 ))}
             </div>
-            <TestFooter/>
+            <TestFooter submitButton={handleSubmitButton}/>
         </div>
       )
 

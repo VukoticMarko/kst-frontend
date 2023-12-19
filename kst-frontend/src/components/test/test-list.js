@@ -20,7 +20,7 @@ function TestList(){
           });
   
           const data = response.data;
-          const testArray = Array.isArray(data.questions) ? data : data.questions || [];
+          const testArray = Array.isArray(data) ? data : data.tests || [];
           setTests(testArray);
         } catch (error) {
           console.error('Error fetching data:', error);

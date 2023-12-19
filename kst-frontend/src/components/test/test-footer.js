@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './test-footer.css';
 
-function TestFooter({ onSubmit }) {
+function TestFooter({ submitButton }) {
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleButtonClick = () => {
@@ -10,7 +10,7 @@ function TestFooter({ onSubmit }) {
 
   const handleConfirm = () => {
     setShowConfirmation(false);
-    //onSubmit(); 
+    submitButton(); 
   };
 
   const handleCancel = () => {

@@ -1,5 +1,4 @@
-.header {
-    position: fixed;
+.header-main {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -9,7 +8,6 @@
     height: 65px;
     width: 100%;
     z-index: 1000;
-
   }
   
   .app-name {

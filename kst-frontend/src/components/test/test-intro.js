@@ -6,7 +6,6 @@ function TestIntroduction() {
 
   const navigation = useNavigate()
   const {courseId, testId} = useParams()
-  const accessToken = localStorage.getItem('accessToken')
   
   const startTest = () => {
     navigation(`/test/${testId}`)
