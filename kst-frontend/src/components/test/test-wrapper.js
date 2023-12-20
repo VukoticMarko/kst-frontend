@@ -34,6 +34,7 @@ function TestWrapper(){
             'studentAnswers': studentAnswers
         }
         console.log(object)
+        let flag = 0
         const postData = async () => {
             try {
               const response = await axios.post(
@@ -50,14 +51,18 @@ function TestWrapper(){
             } catch (error) {
                 if (error.response?.data && error.response.data.message === 'All questions from test should be answered') {
                     alert('All questions from test should be answered!');
+                    flag = 1
                   } else {
                     console.error('Error details:', error.response?.data || error.message);
+                    flag = 1
                 }
                 console.error('Error posting data:', error.response?.data || error.message);
             }
+            if(flag !== 1){
+                navigate('/courses')
+            }
           };
         postData();
-        navigate('/courses')
     };
 
     useEffect(() => {

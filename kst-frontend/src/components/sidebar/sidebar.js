@@ -1,46 +1,44 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './sidebar.css';
 import AccountImage from '../../images/account.png';
 import CoursesImage from '../../images/courses.png';
 import { useNavigate } from 'react-router-dom';
 
-function Sidebar(){
-
-const navigate = useNavigate()
+function Sidebar() {
+  const navigate = useNavigate();
+  const [headerHeight, setHeaderHeight] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
-        const headerElement = document.querySelector('.header-main');
-        if (headerElement) {
-            const headerHeight = headerElement.offsetHeight;
-            document.querySelector('.sidebar').style.marginTop = `${headerHeight}px`;
-        }
+      setHeaderHeight(document.querySelector('.header-main').offsetHeight);
     };
+
+    handleScroll();
 
     window.addEventListener('scroll', handleScroll);
     return () => {
-        window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   const goToAccountPage = () => {
-    navigate("/account")
-  }
+    navigate('/account');
+  };
 
   const goToCoursesPage = () => {
-    navigate("/courses")
-  }
+    navigate('/courses');
+  };
 
   return (
     <div className="sidebar">
       <div onClick={goToAccountPage}>
-        <img style={{cursor: 'pointer'}} src={AccountImage} />
+        <img style={{ cursor: 'pointer' }} src={AccountImage} alt="Account" />
       </div>
       <div onClick={goToCoursesPage}>
-        <img style={{cursor: 'pointer'}} src={CoursesImage} />
+        <img style={{ cursor: 'pointer' }} src={CoursesImage} alt="Courses" />
       </div>
     </div>
   );
-};
+}
 
 export default Sidebar;
