@@ -1,0 +1,39 @@
+.wrapper {
+    width: 82px;
+    height: 52px;
+}
+
+.menu-container {
+    position: relative;
+  }
+  
+  .menu-rectangle {
+    width: 80px;
+    height: 50px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+  }
+  
+  .arrow {
+    font-size: 14px;
+  }
+  
+  .arrow.up {
+    transform: rotate(180deg);
+  }
+  
+  .hidden-form {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
+  }
+  
