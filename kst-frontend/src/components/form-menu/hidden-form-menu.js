@@ -21,7 +21,9 @@ const HiddenFormMenu = ( {btnName, title} ) => {
               {title}
               <input type="text" />
             </label>
-            <button type="submit">Submit</button>
+            <button 
+            className='submit'
+            type="submit">Submit</button>
           </form>
         </div>
       )}

@@ -1,0 +1,17 @@
+.graph-display-container {
+  border: 2px solid black;
+  width: 70%; 
+  height: 400px; 
+  margin: 20px; 
+  float: right;
+}
+
+/* Additional styling for the graph elements (nodes, links) */
+.link {
+  stroke: black;
+}
+
+.node {
+  fill: blue;
+  stroke: black;
+}
