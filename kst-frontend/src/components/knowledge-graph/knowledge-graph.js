@@ -106,8 +106,8 @@ function KnowledgeGraph () {
      <div>
         <div className="sidebarKG">
           <h3 style={{color: 'white'}}>Test Creator</h3>
-          <HiddenFormMenu title={"Add new Question:"} btnName={"New Question"}/>
-          <HiddenFormMenu title={"Add RIGHT answer:"} btnName={"Right Answer"}/>
+          <HiddenFormMenu title={"Add new Question:"} btnName={"New Question"} typeForm={'questionText'}/>
+          <HiddenFormMenu title={"Add RIGHT answer:"} btnName={"Right Answer"} typeForm={'rightAnswer'}/>
           <div className='rb'>
               <h4 style={{color: 'white'}}>Select number of false answers:</h4>
               <input type='radio'
@@ -122,16 +122,16 @@ function KnowledgeGraph () {
           {
             selectedFalse === 1 && (
               <div>
-                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"}/>
+                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"} typeForm={'wrong1'}/>
               </div>
             )
           }
            {
             selectedFalse === 3 && (
               <div>
-                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"}/>
-                <HiddenFormMenu title={"Add FALSE answer 2:"} btnName={"Wrong Answer 2"}/>
-                <HiddenFormMenu title={"Add FALSE answer 3:"} btnName={"Wrong Answer 3"}/>
+                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"} typeForm={'wrong1'}/>
+                <HiddenFormMenu title={"Add FALSE answer 2:"} btnName={"Wrong Answer 2"} typeForm={'wrong2'}/>
+                <HiddenFormMenu title={"Add FALSE answer 3:"} btnName={"Wrong Answer 3"} typeForm={'wrong3'}/>
               </div>
             )
           }
