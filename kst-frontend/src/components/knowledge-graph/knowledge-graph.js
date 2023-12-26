@@ -3,12 +3,14 @@ import { useState, useRef } from "react";
 import HiddenFormMenu from "../form-menu/hidden-form-menu";
 import './knowledge-graph.css'
 import * as d3 from "d3";
+import { useNavigate } from "react-router-dom";
 
 
 function KnowledgeGraph () {
   
   const graphContainerRef = useRef(null);
   const [selectedFalse, setSelectedFalse] = useState(1);
+  const navigate = useNavigate()
 
   useEffect(() => {
     // Your D3 logic to generate a random graph
@@ -96,6 +98,9 @@ function KnowledgeGraph () {
       // Your saveGraph logic here
     };
   
+      navigate('/courses')
+    }
+
     return (
      <div>
         <div className="sidebarKG">
@@ -129,7 +134,7 @@ function KnowledgeGraph () {
               </div>
             )
           }
-          
+          <button onClick={handleBackButton}>Go Back</button>
         </div>
         <div className="graph-display-container" ref={graphContainerRef} />
      </div>

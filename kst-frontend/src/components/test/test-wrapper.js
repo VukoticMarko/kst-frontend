@@ -65,6 +65,24 @@ function TestWrapper(){
         postData();
     };
 
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }      
+
+    function shuffleArrayAnswers(array) {
+        array.forEach(question => {
+          const answers = question.answers;
+          for (let i = answers.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [answers[i], answers[j]] = [answers[j], answers[i]];
+          }
+        });
+      }
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -77,7 +95,10 @@ function TestWrapper(){
               const data = response.data;
               const questions = data.questions
               const questionArray = Array.isArray(data) ? data : questions || [];
-              setQuestions(questionArray);
+              let shuffledArray = shuffleArray(questionArray)
+              console.log(shuffledArray)
+              shuffleArrayAnswers(shuffledArray)
+              setQuestions(shuffledArray);
             } catch (error) {
               console.error('Error fetching data:', error);
             }
