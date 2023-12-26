@@ -45,6 +45,7 @@ const HiddenFormMenu = ( {btnName, title, typeForm} ) => {
       object.userInput = userInput
     }
 
+    // Izmeniti url, body po potrebi
     try {
       const response = await fetch('http://localhost:3000/postURL', {
         method: 'POST',
@@ -55,7 +56,7 @@ const HiddenFormMenu = ( {btnName, title, typeForm} ) => {
       });
 
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error('Error with post:', error);
     }
     
 
