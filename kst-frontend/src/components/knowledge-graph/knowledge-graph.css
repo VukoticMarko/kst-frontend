@@ -15,3 +15,26 @@
   fill: blue;
   stroke: black;
 }
+.graph-display-container {
+
+  height: 300px;
+  width: 300px;
+
+}
+
+.sidebarKG {
+  position: sticky;
+  width: 200px;
+  background-color: #334134; 
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  z-index: 100;
+  padding-top: 20px;
+  transition: margin-top 0.3s;
+}
+
+.rb {
+  margin-top: 80px;
+}

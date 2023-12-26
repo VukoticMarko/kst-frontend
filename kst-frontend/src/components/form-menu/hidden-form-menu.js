@@ -10,7 +10,7 @@ const HiddenFormMenu = ( {btnName, title} ) => {
 
   return (
     <div className='wrapper'>
-      <button className="menu-rectangle" onClick={toggleFormVisibility}>
+      <button className="menu-rectangle-button" onClick={toggleFormVisibility}>
         {btnName}
         <span className={`arrow ${formVisible ? 'up' : 'down'}`}>&#9662;</span>
       </button>
