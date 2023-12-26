@@ -98,6 +98,7 @@ function KnowledgeGraph () {
       // Your saveGraph logic here
     };
   
+    const handleBackButton = () => {
       navigate('/courses')
     }
 
@@ -134,7 +135,7 @@ function KnowledgeGraph () {
               </div>
             )
           }
-          <button onClick={handleBackButton}>Go Back</button>
+          <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
         <div className="graph-display-container" ref={graphContainerRef} />
      </div>

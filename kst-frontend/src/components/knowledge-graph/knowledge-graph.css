@@ -38,3 +38,9 @@
 .rb {
   margin-top: 80px;
 }
+
+.back-button {
+  color: white;
+  background-color: red;
+  width: 88px;
+}
