@@ -6,6 +6,7 @@ function LogoutButton() {
     const navigate = useNavigate()
     const logout = () => {
         localStorage.removeItem('accessToken')
+        localStorage.removeItem('userRole')
         navigate("/")
     } 
   

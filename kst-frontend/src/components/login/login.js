@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../header/header';
 import  "./login.css";
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,10 @@ function Login({setAccessToken}) {
   const [email, setUsername] = useState('');
   const [password, setPassword] = useState('');
   
+  useEffect(() => { // Temp
+    localStorage.clear()
+  })
+
   const handleLogin = async () => {
     try {
       const response = await fetch('http://localhost:3000/auth/login', {
@@ -22,7 +26,9 @@ function Login({setAccessToken}) {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('userRole', data.userWithoutPass.roles)
         setAccessToken(data.accessToken)
         navigation("/courses")
 
