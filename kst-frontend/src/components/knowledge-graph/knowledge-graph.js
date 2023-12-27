@@ -102,16 +102,100 @@ function KnowledgeGraph () {
       navigate('/courses')
     }
 
+    const postQuestion = async () => {
+      console.log('Postuje se:', createdObjectList)
+      try {
+        const response = await fetch('http://localhost:3000/postURL', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ createdObjectList }),
+        });
+  
+      } catch (error) {
+        console.error('Error with post:', error);
+      }
+    }
+
+    const [createdObjectList, setCreatedObjectList] = useState([])
+    let currentQT, currentRA, currentW1, currentW2, currentW3
+
+    const addObjectToList = (object) => {
+      let fqt = 0, fra = 0, fw1 = 0, fw2 = 0, fw3 = 0
+      createdObjectList.forEach(addedObject => {
+        if(addedObject.type === 'questionText' && object.type === 'questionText'){
+          fqt = 1
+          currentQT = object.userInput
+          addedObject.userInput = object.userInput
+        }
+        if(addedObject.type === 'rightAnswer' && object.type === 'rightAnswer'){
+          fra = 1
+          currentRA = object.userInput
+          addedObject.userInput = object.userInput
+        }
+        if(addedObject.type === 'wrong1' && object.type === 'wrong1'){
+          fw1 = 1
+          currentW1 = object.userInput
+          addedObject.userInput = object.userInput
+        }
+        if(addedObject.type === 'wrong2' && object.type === 'wrong2'){
+          fw2 = 1
+          currentW2 = object.userInput
+          addedObject.userInput = object.userInput
+        }
+        if(addedObject.type === 'wrong3' && object.type === 'wrong3'){
+          fw3 = 1
+          currentW3 = object.userInput
+          addedObject.userInput = object.userInput
+        }
+      });
+
+      if(fqt === 0 && object.type === 'questionText'){
+        currentQT = object.userInput
+        createdObjectList.push(object)
+      }
+      if(fra === 0 && object.type === 'rightAnswer'){
+        currentRA = object.userInput
+        createdObjectList.push(object)
+      }
+      if(fw1 === 0 && object.type === 'wrong1'){
+        currentW1 = object.userInput
+        createdObjectList.push(object)
+      }
+      if(fw2 === 0 && object.type === 'wrong2'){
+        currentW2 = object.userInput
+        createdObjectList.push(object)
+      }
+      if(fw3 === 0 && object.type === 'wrong3'){
+        currentW3 = object.userInput
+        createdObjectList.push(object)
+      }
+      console.log('Lista je:', createdObjectList)
+    }
+
+    const removeExtraWrongs = () => {
+      const filteredList = createdObjectList.filter(
+        addedObject => addedObject.type !== 'wrong2' && addedObject.type !== 'wrong3'
+      );
+      setCreatedObjectList(filteredList);
+      setSelectedFalse(1)
+    }
+
     return (
      <div>
         <div className="sidebarKG">
           <h3 style={{color: 'white'}}>Test Creator</h3>
-          <HiddenFormMenu title={"Add new Question:"} btnName={"New Question"} typeForm={'questionText'}/>
-          <HiddenFormMenu title={"Add RIGHT answer:"} btnName={"Right Answer"} typeForm={'rightAnswer'}/>
+          <HiddenFormMenu title={"Add new Question:"} btnName={"New Question"} 
+            typeForm={'questionText'} addObjectToList={addObjectToList}
+            currentState={currentQT}/>
+          <HiddenFormMenu title={"Add RIGHT answer:"} btnName={"Right Answer"}
+           typeForm={'rightAnswer'} addObjectToList={addObjectToList}
+           currentState={currentRA}/>
           <div className='rb'>
               <h4 style={{color: 'white'}}>Select number of false answers:</h4>
               <input type='radio'
-              onChange={() => setSelectedFalse(1)} value={1}
+              onChange={removeExtraWrongs} value={1}
               name='falseAnswers'
               />
               <input type='radio'
@@ -122,19 +206,29 @@ function KnowledgeGraph () {
           {
             selectedFalse === 1 && (
               <div>
-                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"} typeForm={'wrong1'}/>
+                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"} 
+                typeForm={'wrong1'} addObjectToList={addObjectToList}
+                currentState={currentW1}/>
               </div>
             )
           }
            {
             selectedFalse === 3 && (
               <div>
-                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"} typeForm={'wrong1'}/>
-                <HiddenFormMenu title={"Add FALSE answer 2:"} btnName={"Wrong Answer 2"} typeForm={'wrong2'}/>
-                <HiddenFormMenu title={"Add FALSE answer 3:"} btnName={"Wrong Answer 3"} typeForm={'wrong3'}/>
+                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"} 
+                typeForm={'wrong1'} addObjectToList={addObjectToList}
+                currentState={currentW1}/>
+                <HiddenFormMenu title={"Add FALSE answer 2:"} btnName={"Wrong Answer 2"} 
+                typeForm={'wrong2'} addObjectToList={addObjectToList}
+                currentState={currentW2}/>
+                <HiddenFormMenu title={"Add FALSE answer 3:"} btnName={"Wrong Answer 3"} 
+                typeForm={'wrong3'} addObjectToList={addObjectToList}
+                currentState={currentW3}/>
               </div>
             )
           }
+          <button className='finish-button' onClick={postQuestion}>Finish Question</button>
+          <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
         <div className="graph-display-container" ref={graphContainerRef} />

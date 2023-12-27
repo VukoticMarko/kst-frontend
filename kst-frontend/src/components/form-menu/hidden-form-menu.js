@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './hidden-form-menu.css'
 
-const HiddenFormMenu = ( {btnName, title, typeForm} ) => {
+const HiddenFormMenu = ( {btnName, title, typeForm, addObjectToList, currentState} ) => {
 
   const [formVisible, setFormVisible] = useState(false);
   const [userInput, setUserInput] = useState('')
@@ -12,12 +12,11 @@ const HiddenFormMenu = ( {btnName, title, typeForm} ) => {
 
   const handleButtonClick = async () => {
 
-    // Razmisliti kako ce se dodeljivati id i upisivati ovo sve u bazu
-    // Svako pitanje, odgovor i losi odgovori ce biti zasebno slati na backend ovom
-    // logikom (posto se kreira 4 ili 6 ovih komponenti na frontu)
-    // Kada korisnik klikne dugme salje se sta je uneo u input, koji je tip
-    // i to se pakuje u post metodu
-
+    if (userInput.trim() === '') {
+      alert('Input field "'+ title + '" cannot be empty!');
+      return;
+    }
+    
     let object = {
       type: '',
       userInput: ''
@@ -43,23 +42,10 @@ const HiddenFormMenu = ( {btnName, title, typeForm} ) => {
     if(typeForm === 'wrong3'){
       object.type = 'wrong3'
       object.userInput = userInput
-    }
-
-    // Izmeniti url, body po potrebi
-    try {
-      const response = await fetch('http://localhost:3000/postURL', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ object }),
-      });
-
-    } catch (error) {
-      console.error('Error with post:', error);
-    }
     
-
+    }
+    addObjectToList(object)
+    toggleFormVisibility();
   }
 
   return (
@@ -70,16 +56,16 @@ const HiddenFormMenu = ( {btnName, title, typeForm} ) => {
       </button>
       {formVisible && (
         <div className="hidden-form">
-          <form>
             <label>
               {title}
-              <input onChange={(e) => setUserInput(e.target.value)} type="text" />
+              <input onChange={(e) => setUserInput(e.target.value)}
+              value={userInput !== undefined ? userInput : currentState}
+              placeholder={currentState} type="text"/> 
             </label>
             <button 
             onClick={handleButtonClick}
             className='submit'
             type="submit">Submit</button>
-          </form>
         </div>
       )}
     </div>
