@@ -82,12 +82,12 @@ function App() {
         />
         <Route path='/account' element={
           <div>
-            <div>
+            <div className='up-left'>
               <Header> 
                   <LogoutButton />
               </Header>
               <Sidebar />
-            <Account name="Marko" surname="Vukotic" college="FTN" />
+              <div className='content'><Account /></div>
             </div>
           </div>
           }
