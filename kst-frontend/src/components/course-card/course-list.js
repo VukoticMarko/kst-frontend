@@ -29,7 +29,7 @@ function CourseList(){
   }, [accessToken]);
 
   return (
-    <div className="content">
+    <div className="content" style={{marginTop: '30px'}}>
       {courses.map((course) => (
         <CourseCard key={course.id} id={course.id} title={course.title} />
       ))}
