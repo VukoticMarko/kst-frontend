@@ -43,10 +43,9 @@ function Login({setAccessToken}) {
   const goBack = () => {
       navigation("/")
   }
-
+ // <Header />
   return (
     <div>
-      <Header></Header>
       <div id='login-container'>
         <div>
             <label htmlFor="username"><b>Email:</b></label>
