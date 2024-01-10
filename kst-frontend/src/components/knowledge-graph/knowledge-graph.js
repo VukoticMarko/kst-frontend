@@ -1,81 +1,50 @@
-import React, { useEffect } from "react";
-import { useState, useRef } from "react";
+import React from "react";
+import { useState } from "react";
 import HiddenFormMenu from "../form-menu/hidden-form-menu";
 import './knowledge-graph.css';
-import * as d3 from 'd3';
+import ReactFlow, { addEdge, Controls } from "react-flow-renderer";
 import { useNavigate } from "react-router-dom";
 import {v4 as uuidv4} from 'uuid';
 
 
 function KnowledgeGraph () {
 
-  const graphContainerRef = useRef();
   const [selectedFalse, setSelectedFalse] = useState(1);
   const navigate = useNavigate()
   const [nodes, setNodes] = useState([]);  
   const [questionName, setQuestionName] = useState("");
   const [currentQL, setCurrentQuestionLevel] = useState(1);
-  let simulation, svg, width, height;
-
-  useEffect(() => {
-
-    // Set up initial dimensions
-    width = graphContainerRef.current.clientWidth;
-    height = graphContainerRef.current.clientHeight;
-
-    // Create SVG container
-    svg = d3.select(graphContainerRef.current)
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height);
-
-    // Create force simulation
-    simulation = d3.forceSimulation()
-      .force("charge", d3.forceManyBody().strength(-50))
-      .force("link", d3.forceLink([]).distance(100))
-      .force("center", d3.forceCenter(width / 2, height / 2));
-
-    // Set up initial nodes and links
-    setNodes([]);
-    simulation.nodes(nodes).on("tick", updateGraph);
-
-    return () => {
-      simulation.stop();
-    };
-  }, []);
-
+  const [elements, setElements] = useState([]);
 
   // Graph logic
 
   const updateGraph = (questionNode) => {
-    const node = svg.selectAll(".node").data(nodes);
+    
+  };
 
-    node
-      .enter()
-      .append("circle")
-      .attr("class", "node")
-      .attr("r", 20)
-      .attr("fill", "green")
-      .on("click", () => showQuestionName(questionNode));
+  const onElementsRemove = (elementsToRemove) => {
+    setElements((prevElements) =>
+      prevElements.filter((element) => !elementsToRemove.includes(element))
+    );
+  };
 
-    node.exit().remove();
-
-    node.attr("cx", (d) => Math.max(10, Math.min(width - 10, d.x))).attr("cy", (d) => Math.max(10, Math.min(height - 10, d.y)));
+  const onConnect = (params) => {
+    setElements((prevElements) => addEdge(params, prevElements));
   };
 
   const showQuestionName = (questionNode) => {
     console.log("Clicked on question node. Question name:", questionNode.questionName);
   };
   
-    const handleBackButton = () => {
-      navigate('/courses')
-    }
+  const handleBackButton = () => {
+    navigate('/courses')
+  }
 
-    const postTest = () => {
-      
-    }
+  const postTest = () => {
+    
+  }
 
-    const handleQuestionLevelChange = (newValue) => {
+  const handleQuestionLevelChange = (newValue) => {
       setCurrentQuestionLevel(newValue)
       let questionLevelObject = {
         type: 'questionLevel',
@@ -90,18 +59,22 @@ function KnowledgeGraph () {
       } else {
         createdObjectList.push(questionLevelObject);
       }
-    }
+  }
 
 
-    const postQuestion = async () => {
-
+  const postQuestion = async () => {
       const questionNode = {
         id: uuidv4(),
-        x: Math.random() * width,
-        y: Math.random() * height,
-        questionName: questionName, 
+        data: { label: questionName },
+        position: { x: Math.random() * 400, y: Math.random() * 400 },
       };
-    
+      setElements((prevElements) => {
+        const newElements = [...prevElements, questionNode];
+        console.log('newElements:', newElements); // Add this line to check newElements
+        return newElements;
+      });
+      setElements((prevElements) => [...prevElements, questionNode]);
+
       setNodes([...nodes, questionNode]);
       updateGraph(questionNode);
 
@@ -127,7 +100,7 @@ function KnowledgeGraph () {
     const [createdObjectList, setCreatedObjectList] = useState([])
     let currentQT, currentRA, currentW1, currentW2, currentW3
 
-    const addObjectToList = (object) => {
+  const addObjectToList = (object) => {
       let fqt = 0, fra = 0, fw1 = 0, fw2 = 0, fw3 = 0
       createdObjectList.forEach(addedObject => {
         if(addedObject.type === 'questionText' && object.type === 'questionText'){
@@ -178,15 +151,15 @@ function KnowledgeGraph () {
         createdObjectList.push(object)
       }
       console.log('Lista je:', createdObjectList)
-    }
+  }
 
-    const removeExtraWrongs = () => {
+  const removeExtraWrongs = () => {
       const filteredList = createdObjectList.filter(
         addedObject => addedObject.type !== 'wrong2' && addedObject.type !== 'wrong3'
       );
       setCreatedObjectList(filteredList);
       setSelectedFalse(1)
-    }
+  }
 
     return (
      <div className="kg-wrapper">
@@ -244,7 +217,17 @@ function KnowledgeGraph () {
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
-        <div className="graph-display-container-main" ref={graphContainerRef}/>
+        <div className="graph-display-container-main">
+          <ReactFlow
+            elements={elements}
+            onConnect={onConnect}
+            nodesDraggable={false}
+            nodesConnectable={false}
+            style={{ width: '100%', height: '100%' }}
+          >  
+          <Controls />
+          </ReactFlow>
+        </div>
      </div>
     );
   };
