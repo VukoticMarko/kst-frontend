@@ -4,6 +4,7 @@ import HiddenFormMenu from "../form-menu/hidden-form-menu";
 import './knowledge-graph.css';
 import * as d3 from 'd3';
 import { useNavigate } from "react-router-dom";
+import {v4 as uuidv4} from 'uuid';
 
 
 function KnowledgeGraph () {
@@ -11,89 +12,99 @@ function KnowledgeGraph () {
   const graphContainerRef = useRef();
   const [selectedFalse, setSelectedFalse] = useState(1);
   const navigate = useNavigate()
+  const [nodes, setNodes] = useState([]);  
+  const [questionName, setQuestionName] = useState("");
+  const [currentQL, setCurrentQuestionLevel] = useState(1);
+  let simulation, svg, width, height;
 
   useEffect(() => {
-    const width = graphContainerRef.current.clientWidth;
-    const height = graphContainerRef.current.clientHeight;
-    d3.selectAll('.graph-display-container-main svg').remove();
 
-    const svg = d3
-      .select(graphContainerRef.current)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height);
+    // Set up initial dimensions
+    width = graphContainerRef.current.clientWidth;
+    height = graphContainerRef.current.clientHeight;
 
-    const nodes = Array.from({ length: 10 }, (_, i) => ({
-      id: i,
-      x: Math.random() * width,
-      y: Math.random() * height,
-    }));
+    // Create SVG container
+    svg = d3.select(graphContainerRef.current)
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height);
 
-    const links = nodes.map((node, i) => ({
-      source: i,
-      target: Math.floor(Math.random() * nodes.length),
-    }));
+    // Create force simulation
+    simulation = d3.forceSimulation()
+      .force("charge", d3.forceManyBody().strength(-50))
+      .force("link", d3.forceLink([]).distance(100))
+      .force("center", d3.forceCenter(width / 2, height / 2));
 
-    const simulation = d3
-      .forceSimulation(nodes)
-      .force('charge', d3.forceManyBody().strength(-50))
-      .force('link', d3.forceLink(links).distance(100))
-      .force('center', d3.forceCenter(width / 2, height / 2));
-
-    const link = svg
-      .selectAll('.link')
-      .data(links)
-      .enter()
-      .append('line')
-      .attr('class', 'link')
-      .attr('stroke', 'black');
-
-    const node = svg
-      .selectAll('.node')
-      .data(nodes)
-      .enter()
-      .append('circle')
-      .attr('class', 'node')
-      .attr('r', 10)
-      .attr('fill', 'blue');
-
-    simulation.on('tick', () => {
-      link
-        .attr('x1', (d) => d.source.x)
-        .attr('y1', (d) => d.source.y)
-        .attr('x2', (d) => d.target.x)
-        .attr('y2', (d) => d.target.y);
-
-      node.attr('cx', (d) => Math.max(10, Math.min(width - 10, d.x))).attr('cy', (d) => Math.max(10, Math.min(height - 10, d.y)));
-    });
+    // Set up initial nodes and links
+    setNodes([]);
+    simulation.nodes(nodes).on("tick", updateGraph);
 
     return () => {
       simulation.stop();
     };
   }, []);
-  
 
-    const addNode = () => {
-      // Your addNode logic here
-    };
-  
-    const addEdge = () => {
-      // Your addEdge logic here
-    };
-  
-    const removeSelected = () => {
-      // Your removeSelected logic here
-    };
-  
-    const saveGraph = () => {
-      // Your saveGraph logic here
-    };
+
+  // Graph logic
+
+  const updateGraph = (questionNode) => {
+    const node = svg.selectAll(".node").data(nodes);
+
+    node
+      .enter()
+      .append("circle")
+      .attr("class", "node")
+      .attr("r", 20)
+      .attr("fill", "green")
+      .on("click", () => showQuestionName(questionNode));
+
+    node.exit().remove();
+
+    node.attr("cx", (d) => Math.max(10, Math.min(width - 10, d.x))).attr("cy", (d) => Math.max(10, Math.min(height - 10, d.y)));
+  };
+
+  const showQuestionName = (questionNode) => {
+    console.log("Clicked on question node. Question name:", questionNode.questionName);
+  };
   
     const handleBackButton = () => {
       navigate('/courses')
     }
 
+    const postTest = () => {
+      
+    }
+
+    const handleQuestionLevelChange = (newValue) => {
+      setCurrentQuestionLevel(newValue)
+      let questionLevelObject = {
+        type: 'questionLevel',
+        questionLevel: newValue
+      }
+      const existingObjectIndex = createdObjectList.findIndex(
+        (addedObject) => addedObject.type === 'questionLevel'
+      );
+    
+      if (existingObjectIndex !== -1) {
+        createdObjectList[existingObjectIndex] = questionLevelObject;
+      } else {
+        createdObjectList.push(questionLevelObject);
+      }
+    }
+
+
     const postQuestion = async () => {
+
+      const questionNode = {
+        id: uuidv4(),
+        x: Math.random() * width,
+        y: Math.random() * height,
+        questionName: questionName, 
+      };
+    
+      setNodes([...nodes, questionNode]);
+      updateGraph(questionNode);
+
       console.log('Postuje se:', createdObjectList)
       try {
         const response = await fetch('http://localhost:3000/postURL', {
@@ -108,6 +119,10 @@ function KnowledgeGraph () {
         console.error('Error with post:', error);
       }
     }
+
+
+
+    // Object adding logic
 
     const [createdObjectList, setCreatedObjectList] = useState([])
     let currentQT, currentRA, currentW1, currentW2, currentW3
@@ -183,6 +198,12 @@ function KnowledgeGraph () {
           <HiddenFormMenu title={"Add RIGHT answer:"} btnName={"Right Answer"}
            typeForm={'rightAnswer'} addObjectToList={addObjectToList}
            currentState={currentRA}/>
+          <div className='question-level-wrapper'>
+          <h4 style={{color: 'white'}}>Question Level:</h4>
+              <input className='question-level' type="number" id="quantity" name="quantity" min="1" max="99"
+              onChange={(e) => handleQuestionLevelChange(e.target.value)}
+              ></input>
+          </div>
           <div className='rb'>
               <h4 style={{color: 'white'}}>Select number of false answers:</h4>
               <input type='radio'
@@ -219,6 +240,7 @@ function KnowledgeGraph () {
             )
           }
           <button className='finish-button' onClick={postQuestion}>Finish Question</button>
+          <button className='finish-test-button' onClick={postTest}>Finish Test</button>
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>

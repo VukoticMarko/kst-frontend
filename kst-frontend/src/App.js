@@ -45,7 +45,7 @@ function App() {
               <Header> 
                   <LoginButton />
               </Header>
-              <div className='hs-image'> <img src={require('./images/hs.jpg')} style={{ marginLeft: "20px"}} alt='Home Screen Image'/></div>
+              <div className='hs-image'> <img src={require('./images/hs.jpg')} style={{ marginTop: "65px", marginLeft: "20px"}} alt='Home Screen Image'/></div>
             </div>
           }
         />

@@ -22,7 +22,7 @@ const HiddenFormMenu = ( {btnName, title, typeForm, addObjectToList, currentStat
       userInput: ''
     }
 
-    // TYPES: wrong1,2,3 | rightAnswer| questionText
+    // TYPES: wrong1,2,3 | rightAnswer| questionText, questionLevel
     if(typeForm === 'questionText'){
       object.type = 'questionText'
       object.userInput = userInput
@@ -42,8 +42,8 @@ const HiddenFormMenu = ( {btnName, title, typeForm, addObjectToList, currentStat
     if(typeForm === 'wrong3'){
       object.type = 'wrong3'
       object.userInput = userInput
-    
     }
+
     addObjectToList(object)
     toggleFormVisibility();
   }
