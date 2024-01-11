@@ -3,7 +3,6 @@
   margin-left: 200px;
   max-width: calc(100% - 200px);
   height: 100vh; 
-  flex: 1;
 }
 
 .kg-wrapper {
@@ -11,14 +10,15 @@
   width: 100%;
 }
 
-/* Additional styling for the graph elements (nodes, links) */
-.link {
+.link { /*vertice*/
   stroke: black;
 }
 
 .node {
   fill: blue;
   stroke: black;
+  width: 100px; 
+  height: 60px; 
 }
 .graph-display-container {
 

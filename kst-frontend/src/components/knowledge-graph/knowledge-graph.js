@@ -221,8 +221,8 @@ function KnowledgeGraph () {
           <ReactFlow
             elements={elements}
             onConnect={onConnect}
-            nodesDraggable={false}
-            nodesConnectable={false}
+            nodesDraggable={true}
+            nodesConnectable={true}
             style={{ width: '100%', height: '100%' }}
           >  
           <Controls />
