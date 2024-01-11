@@ -19,6 +19,7 @@ import CreateTest from './components/create-test/create-test';
 import { useState } from 'react';
 import TestList from './components/test/test-list';
 import TestWrapper from './components/test/test-wrapper';
+import BasicFlow from './components/knowledge-graph/test-graph';
 
 function App() {
 
@@ -92,6 +93,7 @@ function App() {
           </div>
           }
         />
+        <Route path='/testGraph' element={<BasicFlow/>}/>
       </Routes>
     </Router>
         

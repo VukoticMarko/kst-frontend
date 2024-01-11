@@ -14,7 +14,7 @@ function KnowledgeGraph () {
   const [nodes, setNodes] = useState([]);  
   const [questionName, setQuestionName] = useState("");
   const [currentQL, setCurrentQuestionLevel] = useState(1);
-  const [elements, setElements] = useState([]);
+  const [elements, setElements] = useState([]); // Nodes in the graph
 
   // Graph logic
 
