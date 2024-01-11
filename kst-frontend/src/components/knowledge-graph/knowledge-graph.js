@@ -3,6 +3,8 @@ import { useState } from "react";
 import HiddenFormMenu from "../form-menu/hidden-form-menu";
 import './knowledge-graph.css';
 import ReactFlow, { addEdge, Controls } from "react-flow-renderer";
+import 'react-flow-renderer/dist/style.css'; 
+import 'react-flow-renderer/dist/theme-default.css'; 
 import { useNavigate } from "react-router-dom";
 import {v4 as uuidv4} from 'uuid';
 
@@ -17,10 +19,6 @@ function KnowledgeGraph () {
   const [elements, setElements] = useState([]); // Nodes in the graph
 
   // Graph logic
-
-  const updateGraph = (questionNode) => {
-    
-  };
 
   const onElementsRemove = (elementsToRemove) => {
     setElements((prevElements) =>
@@ -67,15 +65,10 @@ console.log('elementi', elements)
         id: uuidv4(),
         data: { label: questionName },
         type: 'default',
-        position: { x: Math.random() * 400, y: Math.random() * 400 },
+        position: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
       };
-      setElements((prevElements) => {
-        const newElements = [...prevElements, questionNode];
-        console.log('newElements:', newElements); 
-        return newElements;
-      });
+      setElements((prevElements) => [...prevElements, questionNode]);
       setNodes([...nodes, questionNode]);
-      updateGraph(questionNode);
 
       console.log('Postuje se:', createdObjectList)
       try {
@@ -221,7 +214,6 @@ console.log('elementi', elements)
         <div className="graph-display-container-main">
           <ReactFlow
             elements={elements}
-            onConnect={onConnect}
             nodesDraggable={true}
             nodesConnectable={true}
             style={{ width: '100%', height: '100%' }}
