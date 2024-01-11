@@ -212,7 +212,7 @@ function KnowledgeGraph () {
               </div>
             )
           }
-          <button className='finish-button' onClick={postQuestion}>Finish Question</button>
+          <button className='finish-button' onClick={postQuestion}>Add Question</button>
           <button className='finish-test-button' onClick={postTest}>Finish Test</button>
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
