@@ -60,21 +60,20 @@ function KnowledgeGraph () {
         createdObjectList.push(questionLevelObject);
       }
   }
-
+console.log('elementi', elements)
 
   const postQuestion = async () => {
       const questionNode = {
         id: uuidv4(),
         data: { label: questionName },
+        type: 'default',
         position: { x: Math.random() * 400, y: Math.random() * 400 },
       };
       setElements((prevElements) => {
         const newElements = [...prevElements, questionNode];
-        console.log('newElements:', newElements); // Add this line to check newElements
+        console.log('newElements:', newElements); 
         return newElements;
       });
-      setElements((prevElements) => [...prevElements, questionNode]);
-
       setNodes([...nodes, questionNode]);
       updateGraph(questionNode);
 
@@ -106,6 +105,7 @@ function KnowledgeGraph () {
         if(addedObject.type === 'questionText' && object.type === 'questionText'){
           fqt = 1
           currentQT = object.userInput
+          setQuestionName(currentQT)
           addedObject.userInput = object.userInput
         }
         if(addedObject.type === 'rightAnswer' && object.type === 'rightAnswer'){
@@ -132,6 +132,7 @@ function KnowledgeGraph () {
 
       if(fqt === 0 && object.type === 'questionText'){
         currentQT = object.userInput
+        setQuestionName(currentQT)
         createdObjectList.push(object)
       }
       if(fra === 0 && object.type === 'rightAnswer'){
