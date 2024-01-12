@@ -13,6 +13,10 @@ import axios from 'axios';
 
 function KnowledgeGraph () {
 
+  const [testName, setTestName] = useState("Please change name of this Test by pressing on this text.");
+  const [editingTestName, setEditingTestName] = useState(false);
+  const inputRef = useRef(null);
+
   const [selectedFalse, setSelectedFalse] = useState(1);
   const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
   const navigate = useNavigate()  
@@ -28,6 +32,20 @@ function KnowledgeGraph () {
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+
+  // Test name change
+
+  const handleTestNameChange = (e) => {
+    setTestName(e.target.value);
+  };
+
+  const startEditingTestName = () => {
+    setEditingTestName(true);
+  };
+
+  const stopEditingTestName = () => {
+    setEditingTestName(false);
+  };
 
   // Graph logic
 
@@ -163,7 +181,7 @@ function KnowledgeGraph () {
         x: node.x,
         y: node.y
       }));
-    
+      // testName
       console.log('Postuje se:', nodeData)
       try {
         const response = await axios.post('http://localhost:3001/finishTest', { nodes: nodeData });
@@ -300,6 +318,21 @@ function KnowledgeGraph () {
     };
   }, []);
 
+  useEffect(() => {
+
+    const handleClickOutside = (e) => {
+      if (inputRef.current && !inputRef.current.contains(e.target)) {
+        stopEditingTestName();
+      }
+    };
+
+    window.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleBackButton = () => {
     navigate('/courses')
   }
@@ -430,6 +463,20 @@ function KnowledgeGraph () {
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
         <div className="graph-display-container-main">
+          <div className="test-name-container">
+            {editingTestName ? (
+              <input
+                ref={inputRef}
+                type="text"
+                value={testName}
+                onChange={handleTestNameChange}
+                onBlur={stopEditingTestName}
+                autoFocus
+              />
+            ) : (
+              <span onClick={startEditingTestName}>{testName}</span>
+            )}
+          </div>
           <div className="zoom-buttons">
             <button onClick={handleZoomIn}>+</button>
             <button onClick={handleZoomOut}>-</button>
