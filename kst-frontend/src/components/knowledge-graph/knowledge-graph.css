@@ -3,7 +3,6 @@
   margin-left: 200px;
   max-width: calc(100% - 200px);
   height: 100vh; 
-  flex: 1;
 }
 
 .kg-wrapper {
@@ -11,20 +10,36 @@
   width: 100%;
 }
 
-/* Additional styling for the graph elements (nodes, links) */
-.link {
+.link { /*vertice*/
   stroke: black;
 }
 
 .node {
   fill: blue;
   stroke: black;
+  width: 100px; 
+  height: 60px; 
 }
-.graph-display-container {
 
-  height: 300px;
-  width: 300px;
+.react-flow__edge-path {
+  stroke: black;
+  stroke-width: 2px;
+  fill: none; }
 
+.react-flow__node-default {
+  background-color: #fff;
+  border: 1px solid #222;
+  padding: 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  width: 150px; 
+  overflow: hidden; }
+
+.question-level-wrapper {
+  margin-top: 50px;
+  width: 60px;
+  margin-left: 65px;
+  width: 60px;
 }
 
 .sidebarKG {
@@ -42,13 +57,20 @@
 }
 
 .rb {
-  margin-top: 80px;
+  margin-top: 20px;
 }
 
 .finish-button {
   margin-top: 90px;
   color: black;
   background-color: rgb(196, 213, 69);
+  width: 88px;
+}
+
+.finish-test-button {
+  margin-top: 90px;
+  color: black;
+  background-color: rgb(27, 110, 0);
   width: 88px;
 }
 
