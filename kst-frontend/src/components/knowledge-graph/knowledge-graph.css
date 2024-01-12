@@ -79,3 +79,33 @@
   background-color: red;
   width: 88px;
 }
+
+/* CSS for small circular zoom buttons */
+.zoom-buttons {
+  position: absolute;
+  margin-left: 205px;
+  bottom: 20px; 
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.zoom-buttons button {
+  width: 40px; 
+  height: 40px;
+  border: none;
+  border-radius: 50%; 
+  background-color: #3498db;
+  color: black;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 10px; 
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+}
+
+.zoom-buttons button:hover {
+  background-color: #2980b9;
+}

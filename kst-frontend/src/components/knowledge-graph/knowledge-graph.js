@@ -20,7 +20,10 @@ function KnowledgeGraph () {
   const [currentQL, setCurrentQuestionLevel] = useState(1);
   const [nodes, setNodes] = useState([]);
   const svgRef = useRef();
+  const zoomRef = useRef();
   const sidebarWidth = 200;
+
+  const [zoomTransform, setZoomTransform] = useState(d3.zoomIdentity);
 
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltipContent, setTooltipContent] = useState('');
@@ -93,6 +96,30 @@ function KnowledgeGraph () {
     return nodes;
   };
 
+  // Function to handle zoom in
+  const handleZoomIn = () => {
+    const newZoom = zoomTransform.scale * 1.2; // Increase zoom by 20%
+    const zoom = d3.zoom().scaleExtent([0.1, 4]);
+    const updatedTransform = d3.zoomIdentity.scale(newZoom);
+    setZoomTransform(updatedTransform);
+    if (svgRef.current) {
+      // Programmatically apply zoom transform to the SVG
+      d3.select(svgRef.current).call(zoom.transform, updatedTransform);
+    }
+  };
+
+  // Function to handle zoom out
+  const handleZoomOut = () => {
+    const newZoom = zoomTransform.scale * 0.8; // Decrease zoom by 20%
+    const zoom = d3.zoom().scaleExtent([0.1, 4]);
+    const updatedTransform = d3.zoomIdentity.scale(newZoom);
+    setZoomTransform(updatedTransform);
+    if (svgRef.current) {
+      // Programmatically apply zoom transform to the SVG
+      d3.select(svgRef.current).call(zoom.transform, updatedTransform);
+    }
+  };
+
   const postQuestion = async () => {
       const questionNode = {
         id: uuidv4(),
@@ -150,6 +177,22 @@ function KnowledgeGraph () {
 
     const svg = d3.select(svgRef.current);
 
+    // Create a zoom behavior
+    const zoom = d3.zoom()
+    .scaleExtent([0.1, 4]) // Set the minimum and maximum zoom scale
+    .on('zoom', handleZoom);
+
+    // Zoom in the container
+    svg.call(zoom);
+    zoomRef.current = zoom;
+    function handleZoom(event) {
+      const { transform } = event;
+      svg.attr('transform', transform);
+    }
+    svg.call(zoom.on("zoom", (event) => {
+      setZoomTransform(event.transform);
+    }));
+
     // Making nodes moveable
     const drag = d3.drag()
     .on("start", (event, d) => {
@@ -175,7 +218,9 @@ function KnowledgeGraph () {
       }
     })
     .on("end", (event, d) => {
-        svg.selectAll(".link")
+      updateNodePosition(d.id, event.x, event.y);
+      // Update link positions on drag end
+      svg.selectAll(".link")
         .filter(link => link.source === d || link.target === d)
         .attr("x1", link => link.source.x)
         .attr("y1", link => link.source.y)
@@ -238,7 +283,7 @@ function KnowledgeGraph () {
       setTooltipVisible(false);
     });
 
-  }, [nodes, tooltipVisible, tooltipContent]); // Redraw graph when nodes change
+  }, [nodes, tooltipVisible, tooltipContent, zoomTransform]); // Redraw graph when nodes change
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -385,7 +430,11 @@ function KnowledgeGraph () {
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
         <div className="graph-display-container-main">
-        <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}></svg>
+          <div className="zoom-buttons">
+            <button onClick={handleZoomIn}>+</button>
+            <button onClick={handleZoomOut}>-</button>
+          </div>
+          <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}></svg>
         </div>
         <Tooltip 
             tooltipVisible={tooltipVisible}
