@@ -42,137 +42,38 @@ function KnowledgeGraph () {
     }));
   };
 
-  useEffect(() => {
-
-    const svg = d3.select(svgRef.current);
-
-    // Making nodes moveable
-    const drag = d3.drag()
-    .on("start", (event, d) => {
-        d3.select(event.sourceEvent.target).raise();
-    })
-    .on("drag", (event, d) => {
-      updateNodePosition(d.id, event.x, event.y);
-      d3.select(event.sourceEvent.target)
-          .attr("cx", event.x)
-          .attr("cy", event.y);
-      
-      if (tooltipVisible && tooltipContent === d.question) {
-          setTooltipPosition({
-              x: event.x + 20,
-              y: event.y
-          });
-      }
-  });
-
-  const linksData = nodes.flatMap(node =>
-    (node.links || []).map(targetId => {
-      const targetNode = nodes.find(n => n.id === targetId);
-      return targetNode ? { source: node, target: targetNode } : null;
-    }).filter(link => link != null)
-  );
-
-  const link = svg.selectAll(".link")
-    .data(linksData, d => `${d.source.id}-${d.target.id}`);
-
-  link.enter()
-    .append("line")
-    .classed("link", true)
-    .attr("x1", d => d.source.x)
-    .attr("y1", d => d.source.y)
-    .attr("x2", d => d.target.x)
-    .attr("y2", d => d.target.y)
-    .attr("stroke", "black");
-
-  link
-    .attr("x1", d => d.source.x)
-    .attr("y1", d => d.source.y)
-    .attr("x2", d => d.target.x)
-    .attr("y2", d => d.target.y);
-
-  link.exit().remove();
-
-    const circles = svg.selectAll('circle')
-    .data(nodes, d => d.id);
-
-    // Bind nodes to the SVG and create one circle per node
-    circles.enter()
-        .append('circle')
-        .attr('r', 15)
-        .attr('cx', d => d.x ?? (100 + Math.random() * 100))
-        .attr('cy', d => d.y ?? 100)
-        .style('fill', 'green')
-        .style('stroke', 'black')
-        .style('stroke-width', 2)
-        .call(drag)
-        .on('click', (event, d) => {
-          const nodeRadius = 15
-          event.stopPropagation(); 
-          setTooltipContent(d.question);
-          setTooltipPosition({
-              x: d.x,
-              y: d.y + nodeRadius + 5 
-          });
-          setTooltipVisible(true);
-      });
-
-    circles
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y);
-
-    circles.exit().remove();
-
-    svg.on('click', () => {
-      setTooltipVisible(false);
-    });
-
-    // Draw the links
-  const links = nodes.flatMap(node =>
-    node.links.map(targetId => {
-      const targetNode = nodes.find(n => n.id === targetId);
-      return {
-        source: node,
-        target: targetNode,
-      };
-    })
-  );
-
-  }, [nodes, tooltipVisible, tooltipContent]); // Redraw graph when nodes change
-
-  useEffect(() => {
-    const updateDimensions = () => {
-        const width = window.innerWidth - sidebarWidth;
-        const height = window.innerHeight;
-        setSvgDimensions({ width, height });
-    };
-
-    window.addEventListener('resize', updateDimensions);
-    updateDimensions();
-
-    return () => {
-        window.removeEventListener('resize', updateDimensions);
-    };
-  }, []);
-
-  const handleBackButton = () => {
-    navigate('/courses')
+  function getEdgePoint(sourceX, sourceY, targetX, targetY, nodeRadius) {
+    const dx = targetX - sourceX;
+    const dy = targetY - sourceY;
+    const angle = Math.atan2(dy, dx);
+    const x = sourceX + Math.cos(angle) * nodeRadius;
+    const y = sourceY + Math.sin(angle) * nodeRadius;
+    return { x, y };
   }
 
   const handleQuestionLevelChange = (newValue) => {
-      setCurrentQuestionLevel(newValue)
-      let questionLevelObject = {
-        type: 'questionLevel',
-        questionLevel: newValue
-      }
-      const existingObjectIndex = createdObjectList.findIndex(
-        (addedObject) => addedObject.type === 'questionLevel'
-      );
+
+    const questionLevelInt = parseInt(newValue, 10); // Convert to integer
+
+    if (!isNaN(questionLevelInt)) {
+        setCurrentQuestionLevel(questionLevelInt);
+
+        let questionLevelObject = {
+            type: 'questionLevel',
+            questionLevel: questionLevelInt
+        };
+
+        const existingObjectIndex = createdObjectList.findIndex(
+            (addedObject) => addedObject.type === 'questionLevel'
+        );
     
-      if (existingObjectIndex !== -1) {
-        createdObjectList[existingObjectIndex] = questionLevelObject;
-      } else {
-        createdObjectList.push(questionLevelObject);
-      }
+        if (existingObjectIndex !== -1) {
+            createdObjectList[existingObjectIndex] = questionLevelObject;
+        } else {
+            createdObjectList.push(questionLevelObject);
+        }
+    } else {
+        console.error('Invalid question level:', newValue);    }
   }
 
   const updateNodeLinks = (nodes) => {
@@ -184,7 +85,9 @@ function KnowledgeGraph () {
   
     nodes.forEach(node => {
       const nextLevelNodes = nodes.filter(n => n.questionLevel === node.questionLevel + 1);
+      console.log(`Current node level: ${node.questionLevel}, Next level nodes:`, nextLevelNodes);
       node.links = nextLevelNodes.map(n => n.id);
+      console.log(`Updated links for node ${node.id}:`, node.links);
     });
   
     return nodes;
@@ -204,7 +107,6 @@ function KnowledgeGraph () {
         links: []
       };
       addNode(questionNode)
-      updateNodeLinks();
 
       console.log('Postuje se:', createdObjectList)
       try {
@@ -244,11 +146,123 @@ function KnowledgeGraph () {
       }
     };
 
+  useEffect(() => {
+
+    const svg = d3.select(svgRef.current);
+
+    // Making nodes moveable
+    const drag = d3.drag()
+    .on("start", (event, d) => {
+        d3.select(event.sourceEvent.target).raise();
+    })
+    .on("drag", (event, d) => {
+      updateNodePosition(d.id, event.x, event.y);
+      svg.selectAll(".link")
+        .filter(link => link.source === d || link.target === d)
+        .attr("x1", link => link.source.x)
+        .attr("y1", link => link.source.y)
+        .attr("x2", link => link.target.x)
+        .attr("y2", link => link.target.y);
+      d3.select(event.sourceEvent.target)
+          .attr("cx", event.x)
+          .attr("cy", event.y);
+      
+      if (tooltipVisible && tooltipContent === d.question) {
+          setTooltipPosition({
+              x: event.x + 20,
+              y: event.y
+          });
+      }
+    })
+    .on("end", (event, d) => {
+        svg.selectAll(".link")
+        .filter(link => link.source === d || link.target === d)
+        .attr("x1", link => link.source.x)
+        .attr("y1", link => link.source.y)
+        .attr("x2", link => link.target.x)
+        .attr("y2", link => link.target.y);
+    });
+
+    const updatedNodes = updateNodeLinks(nodes);
+    const linksData = updatedNodes.flatMap(node =>
+      (node.links || []).map(targetId => {
+        const targetNode = updatedNodes.find(n => n.id === targetId);
+        return targetNode ? { source: node, target: targetNode } : null;
+      }).filter(link => link != null)
+    );
+
+    const link = svg.selectAll(".link")
+      .data(linksData, d => `${d.source.id}-${d.target.id}`);
+
+      link.enter()
+      .append("line")
+      .classed("link", true)
+      .attr("x1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).x)
+      .attr("y1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).y)
+      .attr("x2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).x)
+      .attr("y2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).y)
+      .attr("stroke", "black");
+
+    link.exit().remove();
+
+    const circles = svg.selectAll('circle')
+    .data(nodes, d => d.id);
+
+    circles.enter()
+        .append('circle')
+        .attr('r', 15)
+        .attr('cx', d => d.x ?? (100 + Math.random() * 100))
+        .attr('cy', d => d.y ?? 100)
+        .style('fill', 'green')
+        .style('stroke', 'black')
+        .style('stroke-width', 2)
+        .call(drag)
+        .on('click', (event, d) => {
+          const nodeRadius = 15
+          event.stopPropagation(); 
+          setTooltipContent(d.question);
+          setTooltipPosition({
+              x: d.x,
+              y: d.y + nodeRadius + 5 
+          });
+          setTooltipVisible(true);
+      });
+
+    circles
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y);
+
+    circles.exit().remove();
+
+    svg.on('click', () => {
+      setTooltipVisible(false);
+    });
+
+  }, [nodes, tooltipVisible, tooltipContent]); // Redraw graph when nodes change
+
+  useEffect(() => {
+    const updateDimensions = () => {
+        const width = window.innerWidth - sidebarWidth;
+        const height = window.innerHeight;
+        setSvgDimensions({ width, height });
+    };
+
+    window.addEventListener('resize', updateDimensions);
+    updateDimensions();
+
+    return () => {
+        window.removeEventListener('resize', updateDimensions);
+    };
+  }, []);
+
+  const handleBackButton = () => {
+    navigate('/courses')
+  }
 
     // Object adding logic
 
-    const [createdObjectList, setCreatedObjectList] = useState([])
-    let currentQT, currentRA, currentW1, currentW2, currentW3
+  const [createdObjectList, setCreatedObjectList] = useState([])
+  let currentQT, currentRA, currentW1, currentW2, currentW3
 
   const addObjectToList = (object) => {
       let fqt = 0, fra = 0, fw1 = 0, fw2 = 0, fw3 = 0
@@ -327,6 +341,7 @@ function KnowledgeGraph () {
           <h4 style={{color: 'white'}}>Question Level:</h4>
               <input className='question-level' type="number" id="quantity" name="quantity" min="1" max="99"
               onChange={(e) => handleQuestionLevelChange(e.target.value)}
+              value={currentQL}
               ></input>
           </div>
           <div className='rb'>
