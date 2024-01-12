@@ -2,44 +2,160 @@ import React from "react";
 import { useState } from "react";
 import HiddenFormMenu from "../form-menu/hidden-form-menu";
 import './knowledge-graph.css';
-import ReactFlow, { addEdge, Controls } from "react-flow-renderer";
-import 'react-flow-renderer/dist/style.css'; 
-import 'react-flow-renderer/dist/theme-default.css'; 
+import * as d3 from 'd3';
 import { useNavigate } from "react-router-dom";
 import {v4 as uuidv4} from 'uuid';
+import { useEffect } from "react";
+import { useRef } from "react";
+import Tooltip from "./tooltip";
+import axios from 'axios';
 
 
 function KnowledgeGraph () {
 
   const [selectedFalse, setSelectedFalse] = useState(1);
-  const navigate = useNavigate()
-  const [nodes, setNodes] = useState([]);  
+  const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
+  const navigate = useNavigate()  
   const [questionName, setQuestionName] = useState("");
   const [currentQL, setCurrentQuestionLevel] = useState(1);
-  const [elements, setElements] = useState([]); // Nodes in the graph
+  const [nodes, setNodes] = useState([]);
+  const svgRef = useRef();
+  const sidebarWidth = 200;
+
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [tooltipContent, setTooltipContent] = useState('');
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   // Graph logic
 
-  const onElementsRemove = (elementsToRemove) => {
-    setElements((prevElements) =>
-      prevElements.filter((element) => !elementsToRemove.includes(element))
-    );
+  const addNode = (newNode) => {
+    setNodes(prevNodes => {
+      const newNodes = [...prevNodes, newNode];
+      console.log("Adding node:", newNode, "New nodes list:", newNodes);
+      return updateNodeLinks(newNodes);
+    });
   };
 
-  const onConnect = (params) => {
-    setElements((prevElements) => addEdge(params, prevElements));
+  const updateNodePosition = (id, x, y) => {
+    setNodes(prevNodes => prevNodes.map(node => {
+        return node.id === id ? { ...node, x, y } : node;
+    }));
   };
 
-  const showQuestionName = (questionNode) => {
-    console.log("Clicked on question node. Question name:", questionNode.questionName);
-  };
-  
+  useEffect(() => {
+
+    const svg = d3.select(svgRef.current);
+
+    // Making nodes moveable
+    const drag = d3.drag()
+    .on("start", (event, d) => {
+        d3.select(event.sourceEvent.target).raise();
+    })
+    .on("drag", (event, d) => {
+      updateNodePosition(d.id, event.x, event.y);
+      d3.select(event.sourceEvent.target)
+          .attr("cx", event.x)
+          .attr("cy", event.y);
+      
+      if (tooltipVisible && tooltipContent === d.question) {
+          setTooltipPosition({
+              x: event.x + 20,
+              y: event.y
+          });
+      }
+  });
+
+  const linksData = nodes.flatMap(node =>
+    (node.links || []).map(targetId => {
+      const targetNode = nodes.find(n => n.id === targetId);
+      return targetNode ? { source: node, target: targetNode } : null;
+    }).filter(link => link != null)
+  );
+
+  const link = svg.selectAll(".link")
+    .data(linksData, d => `${d.source.id}-${d.target.id}`);
+
+  link.enter()
+    .append("line")
+    .classed("link", true)
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y)
+    .attr("stroke", "black");
+
+  link
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y);
+
+  link.exit().remove();
+
+    const circles = svg.selectAll('circle')
+    .data(nodes, d => d.id);
+
+    // Bind nodes to the SVG and create one circle per node
+    circles.enter()
+        .append('circle')
+        .attr('r', 15)
+        .attr('cx', d => d.x ?? (100 + Math.random() * 100))
+        .attr('cy', d => d.y ?? 100)
+        .style('fill', 'green')
+        .style('stroke', 'black')
+        .style('stroke-width', 2)
+        .call(drag)
+        .on('click', (event, d) => {
+          const nodeRadius = 15
+          event.stopPropagation(); 
+          setTooltipContent(d.question);
+          setTooltipPosition({
+              x: d.x,
+              y: d.y + nodeRadius + 5 
+          });
+          setTooltipVisible(true);
+      });
+
+    circles
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y);
+
+    circles.exit().remove();
+
+    svg.on('click', () => {
+      setTooltipVisible(false);
+    });
+
+    // Draw the links
+  const links = nodes.flatMap(node =>
+    node.links.map(targetId => {
+      const targetNode = nodes.find(n => n.id === targetId);
+      return {
+        source: node,
+        target: targetNode,
+      };
+    })
+  );
+
+  }, [nodes, tooltipVisible, tooltipContent]); // Redraw graph when nodes change
+
+  useEffect(() => {
+    const updateDimensions = () => {
+        const width = window.innerWidth - sidebarWidth;
+        const height = window.innerHeight;
+        setSvgDimensions({ width, height });
+    };
+
+    window.addEventListener('resize', updateDimensions);
+    updateDimensions();
+
+    return () => {
+        window.removeEventListener('resize', updateDimensions);
+    };
+  }, []);
+
   const handleBackButton = () => {
     navigate('/courses')
-  }
-
-  const postTest = () => {
-    
   }
 
   const handleQuestionLevelChange = (newValue) => {
@@ -58,17 +174,37 @@ function KnowledgeGraph () {
         createdObjectList.push(questionLevelObject);
       }
   }
-console.log('elementi', elements)
+
+  const updateNodeLinks = (nodes) => {
+    
+    if (!Array.isArray(nodes)) {
+      console.error('updateNodeLinks was called without an array');
+      return [];
+    }
+  
+    nodes.forEach(node => {
+      const nextLevelNodes = nodes.filter(n => n.questionLevel === node.questionLevel + 1);
+      node.links = nextLevelNodes.map(n => n.id);
+    });
+  
+    return nodes;
+  };
 
   const postQuestion = async () => {
       const questionNode = {
         id: uuidv4(),
-        data: { label: questionName },
-        type: 'default',
-        position: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
+        question: questionName,
+        questionLevel: currentQL,
+        rightAnswer: currentRA,
+        wrongAnswer1: currentW1,
+        wrongAnswer2: currentW2,
+        wrongAnswer3: currentW3,
+        x: Math.random() * (svgDimensions.width - sidebarWidth),
+        y: Math.random() * svgDimensions.height,
+        links: []
       };
-      setElements((prevElements) => [...prevElements, questionNode]);
-      setNodes([...nodes, questionNode]);
+      addNode(questionNode)
+      updateNodeLinks();
 
       console.log('Postuje se:', createdObjectList)
       try {
@@ -83,8 +219,30 @@ console.log('elementi', elements)
       } catch (error) {
         console.error('Error with post:', error);
       }
-    }
+    };
 
+    const postTest = async () => {
+
+      // Gather nodes in list
+      const nodeData = nodes.map(node => ({
+        question: node.question,
+        questionLevel: node.questionLevel,
+        rightAnswer: node.rightAnswer,
+        wrongAnswer1: node.wrongAnswer1,
+        wrongAnswer2: node.wrongAnswer2,
+        wrongAnswer3: node.wrongAnswer3,
+        x: node.x,
+        y: node.y
+      }));
+    
+      console.log('Postuje se:', nodeData)
+      try {
+        const response = await axios.post('http://localhost:3001/finishTest', { nodes: nodeData });
+        console.log(response.data);
+      } catch (error) {
+        console.error('There was an error sending the test data:', error);
+      }
+    };
 
 
     // Object adding logic
@@ -212,15 +370,13 @@ console.log('elementi', elements)
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
         <div className="graph-display-container-main">
-          <ReactFlow
-            elements={elements}
-            nodesDraggable={true}
-            nodesConnectable={true}
-            style={{ width: '100%', height: '100%' }}
-          >  
-          <Controls />
-          </ReactFlow>
+        <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}></svg>
         </div>
+        <Tooltip 
+            tooltipVisible={tooltipVisible}
+            tooltipContent={tooltipContent}
+            tooltipPosition={tooltipPosition}
+        />
      </div>
     );
   };
