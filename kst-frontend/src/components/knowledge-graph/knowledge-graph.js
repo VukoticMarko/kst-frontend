@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useRef } from "react";
 import Tooltip from "./tooltip";
 import axios from 'axios';
+import { object } from "prop-types";
 
 
 function KnowledgeGraph () {
@@ -16,6 +17,8 @@ function KnowledgeGraph () {
   const [testName, setTestName] = useState("Please change name of this Test by pressing on this text.");
   const [editingTestName, setEditingTestName] = useState(false);
   const inputRef = useRef(null);
+
+  const accessToken = localStorage.getItem('accessToken')
 
   const [selectedFalse, setSelectedFalse] = useState(1);
   const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
@@ -114,27 +117,25 @@ function KnowledgeGraph () {
     return nodes;
   };
 
-  // Function to handle zoom in
   const handleZoomIn = () => {
-    const newZoom = zoomTransform.scale * 1.2; // Increase zoom by 20%
-    const zoom = d3.zoom().scaleExtent([0.1, 4]);
-    const updatedTransform = d3.zoomIdentity.scale(newZoom);
+    const newZoom = zoomTransform.k * 1.2; // Increase zoom by 20%
+    const updatedTransform = zoomTransform.scale(newZoom);
     setZoomTransform(updatedTransform);
-    if (svgRef.current) {
-      // Programmatically apply zoom transform to the SVG
-      d3.select(svgRef.current).call(zoom.transform, updatedTransform);
-    }
+    applyZoomTransform(updatedTransform);
   };
-
-  // Function to handle zoom out
+  
   const handleZoomOut = () => {
-    const newZoom = zoomTransform.scale * 0.8; // Decrease zoom by 20%
-    const zoom = d3.zoom().scaleExtent([0.1, 4]);
-    const updatedTransform = d3.zoomIdentity.scale(newZoom);
+    const newZoom = zoomTransform.k * 0.8; // Decrease zoom by 20%
+    const updatedTransform = zoomTransform.scale(newZoom);
     setZoomTransform(updatedTransform);
+    applyZoomTransform(updatedTransform);
+  };
+  
+  // Function to apply zoom transform to the SVG
+  const applyZoomTransform = (transform) => {
     if (svgRef.current) {
-      // Programmatically apply zoom transform to the SVG
-      d3.select(svgRef.current).call(zoom.transform, updatedTransform);
+      d3.select(svgRef.current).select(".graph-display-container-main")
+        .attr("transform", transform);
     }
   };
 
@@ -171,7 +172,7 @@ function KnowledgeGraph () {
     const postTest = async () => {
 
       // Gather nodes in list
-      const nodeData = nodes.map(node => ({
+      const questionNodes = nodes.map(node => ({
         question: node.question,
         questionLevel: node.questionLevel,
         rightAnswer: node.rightAnswer,
@@ -181,11 +182,21 @@ function KnowledgeGraph () {
         x: node.x,
         y: node.y
       }));
-      // testName
-      console.log('Postuje se:', nodeData)
+      const testObject = {
+        testName: testName,
+        questions: questionNodes,
+      }
+      console.log('Postuje se:', testObject)
       try {
-        const response = await axios.post('http://localhost:3001/finishTest', { nodes: nodeData });
-        console.log(response.data);
+        const response = await axios.post('http://localhost:3001/finishTest', { 
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ testObject }),
+      });
+        console.log(response);
       } catch (error) {
         console.error('There was an error sending the test data:', error);
       }
@@ -210,6 +221,7 @@ function KnowledgeGraph () {
     svg.call(zoom.on("zoom", (event) => {
       setZoomTransform(event.transform);
     }));
+    
 
     // Making nodes moveable
     const drag = d3.drag()
