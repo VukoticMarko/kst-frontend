@@ -47,6 +47,7 @@ function Sidebar() {
       {userRole === 'Professor' && (
       <div onClick={goToGraphPage}>
         <img className='graph' style={{ cursor: 'pointer' }} src={GraphImage} alt="Graph" />
+        <p style={{color: 'white', cursor: 'pointer'}}>Create New Graphs and Concepts</p>
       </div>
       )}
     </div>

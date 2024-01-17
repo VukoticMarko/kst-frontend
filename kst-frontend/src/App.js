@@ -3,19 +3,14 @@ import 'bulma/css/bulma.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/sidebar/sidebar';
 import Header from './components/header/header';
-import CourseCard from './components/course-card/course-card';
 import Login from './components/login/login';
 import LoginButton from './components/login/login-button';
-import TestCard from './components/test/test-card';
 import TestIntroduction from './components/test/test-intro';
-import Test4Option from './components/test/test-option';
 import LogoutButton from './components/login/logout-button';
 import Account from './components/account/account';
 import KnowledgeGraph from './components/knowledge-graph/knowledge-graph';
-import TestText from './components/test/test-text';
-import TestFooter from './components/test/test-footer';
 import CourseList from './components/course-card/course-list';
-import CreateTest from './components/create-test/create-test';
+import TestCreator from './components/test-create/test-create';
 import { useState } from 'react';
 import TestList from './components/test/test-list';
 import TestWrapper from './components/test/test-wrapper';
@@ -31,7 +26,6 @@ function App() {
     <Router>
       <Routes>
           <Route path='/kg' element={<KnowledgeGraph></KnowledgeGraph>} />
-          <Route path='/createTest' element={<CreateTest/>} />
           <Route path='/test/:testId' element={
           <div>
           <Header/>
@@ -70,10 +64,15 @@ function App() {
             <div className="content">
               <TestList/>
             </div>
-          </div>
-            
+          </div>  
           }
         />
+        <Route path='/createTest/:courseId' element={
+        <div>
+          <TestCreator></TestCreator>
+        </div>  
+        }
+      />
          <Route path='/testIntroduction/:courseId/:testId' element={
           <div>
             <TestIntroduction/>

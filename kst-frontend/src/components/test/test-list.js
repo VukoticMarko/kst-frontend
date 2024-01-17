@@ -8,6 +8,7 @@ function TestList(){
   const [tests, setTests] = useState([]);
   const {courseId} = useParams()
   const accessToken = localStorage.getItem('accessToken')
+  const userRole = localStorage.getItem('userRole');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,6 +32,16 @@ function TestList(){
 
   return (
     <div className="content">
+      {
+        userRole === 'Professor' && (
+
+          <TestCard key={'creating-test-key'} id={'creating-test-key'} title={'Create New Tests'} 
+          time={''}
+          courseId={courseId}
+          description={'By pressing this card you can create new tests for students with help of knowledge graphs.'}
+          />
+
+      )}
       {tests.map((test) => (
         <TestCard key={test.id} id={test.id} title={test.title} time={test.createdAt} courseId={courseId} />
       ))}

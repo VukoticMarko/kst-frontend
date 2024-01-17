@@ -1,24 +1,24 @@
 import React from "react";
 import { useState } from "react";
 import HiddenFormMenu from "../form-menu/hidden-form-menu";
-import './knowledge-graph.css';
+import './test-create.css';
 import * as d3 from 'd3';
 import { useNavigate } from "react-router-dom";
 import {v4 as uuidv4} from 'uuid';
 import { useEffect } from "react";
 import { useRef } from "react";
-import Tooltip from "./tooltip";
+import Tooltip from "../knowledge-graph/tooltip";
 import axios from 'axios';
 
+function TestCreate () {
 
-function KnowledgeGraph () {
-
-  const [testName, setTestName] = useState("Please change name of this Knowledge Graph by pressing on this text.");
+  const [testName, setTestName] = useState("Please change name of this Test by pressing on this text.");
   const [editingTestName, setEditingTestName] = useState(false);
   const inputRef = useRef(null);
 
   const accessToken = localStorage.getItem('accessToken')
 
+  const [selectedFalse, setSelectedFalse] = useState(1);
   const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
   const navigate = useNavigate()  
   const [questionName, setQuestionName] = useState("");
@@ -142,36 +142,57 @@ function KnowledgeGraph () {
         id: uuidv4(),
         question: questionName,
         questionLevel: currentQL,
+        rightAnswer: currentRA,
+        wrongAnswer1: currentW1,
+        wrongAnswer2: currentW2,
+        wrongAnswer3: currentW3,
         x: Math.random() * (svgDimensions.width - sidebarWidth),
         y: Math.random() * svgDimensions.height,
         links: []
       };
       addNode(questionNode)
+
+      console.log('Postuje se:', createdObjectList)
+      try {
+        const response = await fetch('http://localhost:3000/postURL', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ createdObjectList }),
+        });
+  
+      } catch (error) {
+        console.error('Error with post:', error);
+      }
     };
 
     const postTest = async () => {
 
       // Gather nodes in list
       const questionNodes = nodes.map(node => ({
-        id: node.id,
-        concept: node.question,
+        question: node.question,
         questionLevel: node.questionLevel,
+        rightAnswer: node.rightAnswer,
+        wrongAnswer1: node.wrongAnswer1,
+        wrongAnswer2: node.wrongAnswer2,
+        wrongAnswer3: node.wrongAnswer3,
         x: node.x,
         y: node.y
       }));
-      const newGraph = {
-        graphName: testName,
-        concepts: questionNodes,
+      const testObject = {
+        testName: testName,
+        questions: questionNodes,
       }
-      console.log('Postuje se:', newGraph)
+      console.log('Postuje se:', testObject)
       try {
-        const response = await axios.post('http://localhost:3001/postGraph', { 
+        const response = await axios.post('http://localhost:3001/finishTest', { 
           method: 'POST',
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ newGraph }),
+          body: JSON.stringify({ testObject }),
       });
         console.log(response);
         navigate('/courses')
@@ -330,7 +351,7 @@ function KnowledgeGraph () {
     // Object adding logic
 
   const [createdObjectList, setCreatedObjectList] = useState([])
-  let currentQT, currentRA
+  let currentQT, currentRA, currentW1, currentW2, currentW3
 
   const addObjectToList = (object) => {
       let fqt = 0, fra = 0, fw1 = 0, fw2 = 0, fw3 = 0
@@ -341,6 +362,26 @@ function KnowledgeGraph () {
           setQuestionName(currentQT)
           addedObject.userInput = object.userInput
         }
+        if(addedObject.type === 'rightAnswer' && object.type === 'rightAnswer'){
+          fra = 1
+          currentRA = object.userInput
+          addedObject.userInput = object.userInput
+        }
+        if(addedObject.type === 'wrong1' && object.type === 'wrong1'){
+          fw1 = 1
+          currentW1 = object.userInput
+          addedObject.userInput = object.userInput
+        }
+        if(addedObject.type === 'wrong2' && object.type === 'wrong2'){
+          fw2 = 1
+          currentW2 = object.userInput
+          addedObject.userInput = object.userInput
+        }
+        if(addedObject.type === 'wrong3' && object.type === 'wrong3'){
+          fw3 = 1
+          currentW3 = object.userInput
+          addedObject.userInput = object.userInput
+        }
       });
 
       if(fqt === 0 && object.type === 'questionText'){
@@ -348,16 +389,43 @@ function KnowledgeGraph () {
         setQuestionName(currentQT)
         createdObjectList.push(object)
       }
+      if(fra === 0 && object.type === 'rightAnswer'){
+        currentRA = object.userInput
+        createdObjectList.push(object)
+      }
+      if(fw1 === 0 && object.type === 'wrong1'){
+        currentW1 = object.userInput
+        createdObjectList.push(object)
+      }
+      if(fw2 === 0 && object.type === 'wrong2'){
+        currentW2 = object.userInput
+        createdObjectList.push(object)
+      }
+      if(fw3 === 0 && object.type === 'wrong3'){
+        currentW3 = object.userInput
+        createdObjectList.push(object)
+      }
       console.log('Lista je:', createdObjectList)
+  }
+
+  const removeExtraWrongs = () => {
+      const filteredList = createdObjectList.filter(
+        addedObject => addedObject.type !== 'wrong2' && addedObject.type !== 'wrong3'
+      );
+      setCreatedObjectList(filteredList);
+      setSelectedFalse(1)
   }
 
     return (
      <div className="kg-wrapper">
         <div className="sidebarKG">
-          <h3 style={{color: 'white'}}>Knowledge Graph Creator</h3>
-          <HiddenFormMenu title={"Add new Concept:"} btnName={"New Concept"} 
+          <h3 style={{color: 'white'}}>Test Creator</h3>
+          <HiddenFormMenu title={"Add new Question:"} btnName={"New Question"} 
             typeForm={'questionText'} addObjectToList={addObjectToList}
             currentState={currentQT}/>
+          <HiddenFormMenu title={"Add RIGHT answer:"} btnName={"Right Answer"}
+           typeForm={'rightAnswer'} addObjectToList={addObjectToList}
+           currentState={currentRA}/>
           <div className='question-level-wrapper'>
           <h4 style={{color: 'white'}}>Question Level:</h4>
               <input className='question-level' type="number" id="quantity" name="quantity" min="1" max="99"
@@ -365,8 +433,43 @@ function KnowledgeGraph () {
               value={currentQL}
               ></input>
           </div>
-          <button className='finish-button' onClick={postQuestion}>Add Node</button>
-          <button className='finish-test-button' onClick={postTest}>Finish Graph</button>
+          <div className='rb'>
+              <h4 style={{color: 'white'}}>Select number of false answers:</h4>
+              <input type='radio'
+              onChange={removeExtraWrongs} value={1}
+              name='falseAnswers'
+              />
+              <input type='radio'
+              onChange={() => setSelectedFalse(3)} value={3}
+              name='falseAnswers'
+              />
+          </div>
+          {
+            selectedFalse === 1 && (
+              <div>
+                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"} 
+                typeForm={'wrong1'} addObjectToList={addObjectToList}
+                currentState={currentW1}/>
+              </div>
+            )
+          }
+           {
+            selectedFalse === 3 && (
+              <div>
+                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"} 
+                typeForm={'wrong1'} addObjectToList={addObjectToList}
+                currentState={currentW1}/>
+                <HiddenFormMenu title={"Add FALSE answer 2:"} btnName={"Wrong Answer 2"} 
+                typeForm={'wrong2'} addObjectToList={addObjectToList}
+                currentState={currentW2}/>
+                <HiddenFormMenu title={"Add FALSE answer 3:"} btnName={"Wrong Answer 3"} 
+                typeForm={'wrong3'} addObjectToList={addObjectToList}
+                currentState={currentW3}/>
+              </div>
+            )
+          }
+          <button className='finish-button' onClick={postQuestion}>Add Question</button>
+          <button className='finish-test-button' onClick={postTest}>Finish Test</button>
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
@@ -400,4 +503,4 @@ function KnowledgeGraph () {
     );
   };
 
-export default KnowledgeGraph;
+export default TestCreate;
