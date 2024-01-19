@@ -10,7 +10,7 @@ function TestCard({ id, title, time, courseId, description }){
 
     const EnterTest = () => {
       if (userRole === 'Professor'){
-        navigate(`/createTest/${courseId}`)
+        navigate(`/chooseGraph/${courseId}`)
       }else{
         navigate(`/testIntroduction/${courseId}/${testId}`)
       }

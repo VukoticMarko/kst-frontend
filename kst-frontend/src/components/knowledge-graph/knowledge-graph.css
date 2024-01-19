@@ -109,3 +109,24 @@
 .zoom-buttons button:hover {
   background-color: #2980b9;
 }
+
+.description-edit-container {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000; 
+  background: white;
+  padding: 10px; /* Optional: for spacing */
+  border-radius: 5px; /* Optional: if you want rounded corners */
+  max-width: 200px; /* Optional: prevent it from getting too wide */
+}
+
+.description-edit-container span,
+.description-edit-container input {
+  cursor: pointer;
+}
+
+.description-edit-container input {
+  width: 100%; /* Make the input take up the full container width */
+  box-sizing: border-box; /* Include padding and border in the input width */
+}

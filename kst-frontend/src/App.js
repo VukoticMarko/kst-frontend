@@ -10,11 +10,11 @@ import LogoutButton from './components/login/logout-button';
 import Account from './components/account/account';
 import KnowledgeGraph from './components/knowledge-graph/knowledge-graph';
 import CourseList from './components/course-card/course-list';
-import TestCreator from './components/test-create/test-create';
 import { useState } from 'react';
 import TestList from './components/test/test-list';
 import TestWrapper from './components/test/test-wrapper';
-import BasicFlow from './components/knowledge-graph/test-graph';
+import ChooseGraph from './components/graph/choose-graph';
+import TestCreate from './components/test-create/test-create';
 
 function App() {
 
@@ -67,18 +67,26 @@ function App() {
           </div>  
           }
         />
-        <Route path='/createTest/:courseId' element={
+        <Route path='/chooseGraph/:courseId' element={
         <div>
-          <TestCreator></TestCreator>
+          <Header />
+          <Sidebar />
+          <div className='content'><ChooseGraph></ChooseGraph></div>
         </div>  
         }
-      />
-         <Route path='/testIntroduction/:courseId/:testId' element={
-          <div>
-            <TestIntroduction/>
-          </div>
-            
-          }
+        />
+        <Route path='/createTest/:courseId' element={
+        <div>
+          <TestCreate/>
+        </div>  
+        }
+        />
+        <Route path='/testIntroduction/:courseId/:testId' element={
+        <div>
+          <TestIntroduction/>
+        </div>
+          
+        }
         />
         <Route path='/account' element={
           <div>
@@ -92,7 +100,6 @@ function App() {
           </div>
           }
         />
-        <Route path='/testGraph' element={<BasicFlow/>}/>
       </Routes>
     </Router>
         

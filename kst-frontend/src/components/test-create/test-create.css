@@ -109,3 +109,20 @@
     background-color: #2980b9;
   }
   
+  .concept-select {
+    margin-top: 10px;
+    font-family: 'Arial', sans-serif;
+    border-radius: 20px; 
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .concept-select:focus {
+    outline: none;
+    border-color: #a9a9a9;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  }
+  

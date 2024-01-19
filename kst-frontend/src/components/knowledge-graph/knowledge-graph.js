@@ -13,8 +13,12 @@ import axios from 'axios';
 
 function KnowledgeGraph () {
 
-  const [testName, setTestName] = useState("Please change name of this Knowledge Graph by pressing on this text.");
+  const [testName, setTestName] = useState("Please change name of this Knowledge Graph by clicking on this text.");
   const [editingTestName, setEditingTestName] = useState(false);
+
+  const [description, setDescription] = useState("Please change description of this graph by clicking on this text.");
+  const [editingDescription, setEditingDescription] = useState(false);
+
   const inputRef = useRef(null);
 
   const accessToken = localStorage.getItem('accessToken')
@@ -161,6 +165,7 @@ function KnowledgeGraph () {
       }));
       const newGraph = {
         graphName: testName,
+        graphDescription: description,
         concepts: questionNodes,
       }
       console.log('Postuje se:', newGraph)
@@ -247,14 +252,14 @@ function KnowledgeGraph () {
     const link = svg.selectAll(".link")
       .data(linksData, d => `${d.source.id}-${d.target.id}`);
 
-      link.enter()
-      .append("line")
-      .classed("link", true)
-      .attr("x1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).x)
-      .attr("y1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).y)
-      .attr("x2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).x)
-      .attr("y2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).y)
-      .attr("stroke", "black");
+    link.enter()
+    .append("line")
+    .classed("link", true)
+    .attr("x1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).x)
+    .attr("y1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).y)
+    .attr("x2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).x)
+    .attr("y2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).y)
+    .attr("stroke", "black");
 
     link.exit().remove();
 
@@ -385,6 +390,19 @@ function KnowledgeGraph () {
               <span onClick={startEditingTestName}>{testName}</span>
             )}
           </div>
+          <div className="description-edit-container">
+          {editingDescription ? (
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              onBlur={() => setEditingDescription(false)}
+              autoFocus
+            />
+          ) : (
+            <span onClick={() => setEditingDescription(true)}>{description}</span>
+          )}
+</div>
           <div className="zoom-buttons">
             <button onClick={handleZoomIn}>+</button>
             <button onClick={handleZoomOut}>-</button>

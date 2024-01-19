@@ -1,0 +1,10 @@
+.rectangle {
+    width: 300px; 
+    height: 400px; 
+    position: relative;
+  }
+
+.graph-wrapper {
+    margin-top: 70px;
+}
+  

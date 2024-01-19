@@ -3,7 +3,7 @@ import { useState } from "react";
 import HiddenFormMenu from "../form-menu/hidden-form-menu";
 import './test-create.css';
 import * as d3 from 'd3';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {v4 as uuidv4} from 'uuid';
 import { useEffect } from "react";
 import { useRef } from "react";
@@ -12,9 +12,11 @@ import axios from 'axios';
 
 function TestCreate () {
 
-  const [testName, setTestName] = useState("Please change name of this Test by pressing on this text.");
-  const [editingTestName, setEditingTestName] = useState(false);
-  const inputRef = useRef(null);
+  const location = useLocation();
+  const { graph } = location.state || {};
+  const [testName, setTestName] = useState(graph.graphName);
+
+  const [selectedConcept, setSelectedConcept] = useState('');
 
   const accessToken = localStorage.getItem('accessToken')
 
@@ -23,7 +25,7 @@ function TestCreate () {
   const navigate = useNavigate()  
   const [questionName, setQuestionName] = useState("");
   const [currentQL, setCurrentQuestionLevel] = useState(1);
-  const [nodes, setNodes] = useState([]);
+  const [nodes, setNodes] = useState(graph.concepts);
   const svgRef = useRef();
   const zoomRef = useRef();
   const sidebarWidth = 200;
@@ -34,35 +36,8 @@ function TestCreate () {
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
-  // Test name change
-
-  const handleTestNameChange = (e) => {
-    setTestName(e.target.value);
-  };
-
-  const startEditingTestName = () => {
-    setEditingTestName(true);
-  };
-
-  const stopEditingTestName = () => {
-    setEditingTestName(false);
-  };
-
   // Graph logic
 
-  const addNode = (newNode) => {
-    setNodes(prevNodes => {
-      const newNodes = [...prevNodes, newNode];
-      console.log("Adding node:", newNode, "New nodes list:", newNodes);
-      return updateNodeLinks(newNodes);
-    });
-  };
-
-  const updateNodePosition = (id, x, y) => {
-    setNodes(prevNodes => prevNodes.map(node => {
-        return node.id === id ? { ...node, x, y } : node;
-    }));
-  };
 
   function getEdgePoint(sourceX, sourceY, targetX, targetY, nodeRadius) {
     const dx = targetX - sourceX;
@@ -72,6 +47,10 @@ function TestCreate () {
     const y = sourceY + Math.sin(angle) * nodeRadius;
     return { x, y };
   }
+
+  const handleConceptChange = (event) => {
+    setSelectedConcept(event.target.value);
+  };
 
   const handleQuestionLevelChange = (newValue) => {
 
@@ -138,19 +117,15 @@ function TestCreate () {
   };
 
   const postQuestion = async () => {
-      const questionNode = {
-        id: uuidv4(),
+      const question = {
         question: questionName,
         questionLevel: currentQL,
         rightAnswer: currentRA,
         wrongAnswer1: currentW1,
         wrongAnswer2: currentW2,
         wrongAnswer3: currentW3,
-        x: Math.random() * (svgDimensions.width - sidebarWidth),
-        y: Math.random() * svgDimensions.height,
-        links: []
       };
-      addNode(questionNode)
+      //addNode(questionNode)
 
       console.log('Postuje se:', createdObjectList)
       try {
@@ -220,42 +195,6 @@ function TestCreate () {
     svg.call(zoom.on("zoom", (event) => {
       setZoomTransform(event.transform);
     }));
-    
-
-    // Making nodes moveable
-    const drag = d3.drag()
-    .on("start", (event, d) => {
-        d3.select(event.sourceEvent.target).raise();
-    })
-    .on("drag", (event, d) => {
-      updateNodePosition(d.id, event.x, event.y);
-      svg.selectAll(".link")
-        .filter(link => link.source === d || link.target === d)
-        .attr("x1", link => link.source.x)
-        .attr("y1", link => link.source.y)
-        .attr("x2", link => link.target.x)
-        .attr("y2", link => link.target.y);
-      d3.select(event.sourceEvent.target)
-          .attr("cx", event.x)
-          .attr("cy", event.y);
-      
-      if (tooltipVisible && tooltipContent === d.question) {
-          setTooltipPosition({
-              x: event.x + 20,
-              y: event.y
-          });
-      }
-    })
-    .on("end", (event, d) => {
-      updateNodePosition(d.id, event.x, event.y);
-      // Update link positions on drag end
-      svg.selectAll(".link")
-        .filter(link => link.source === d || link.target === d)
-        .attr("x1", link => link.source.x)
-        .attr("y1", link => link.source.y)
-        .attr("x2", link => link.target.x)
-        .attr("y2", link => link.target.y);
-    });
 
     const updatedNodes = updateNodeLinks(nodes);
     const linksData = updatedNodes.flatMap(node =>
@@ -290,7 +229,6 @@ function TestCreate () {
         .style('fill', 'green')
         .style('stroke', 'black')
         .style('stroke-width', 2)
-        .call(drag)
         .on('click', (event, d) => {
           const nodeRadius = 15
           event.stopPropagation(); 
@@ -328,21 +266,7 @@ function TestCreate () {
         window.removeEventListener('resize', updateDimensions);
     };
   }, []);
-
-  useEffect(() => {
-
-    const handleClickOutside = (e) => {
-      if (inputRef.current && !inputRef.current.contains(e.target)) {
-        stopEditingTestName();
-      }
-    };
-
-    window.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      window.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  
 
   const handleBackButton = () => {
     navigate('/courses')
@@ -433,6 +357,17 @@ function TestCreate () {
               value={currentQL}
               ></input>
           </div>
+          <div className="concept-select">
+            <select value={selectedConcept} onChange={handleConceptChange}>
+                <option value="" disabled>Select Concept</option>
+                {nodes.map((node) => (
+                    <option key={node.key} value={node.concept}>
+                        {node.concept}
+                    </option>
+                ))}
+            </select>
+            {selectedConcept && <p>Selected Concept: {selectedConcept}</p>}
+        </div>
           <div className='rb'>
               <h4 style={{color: 'white'}}>Select number of false answers:</h4>
               <input type='radio'
@@ -475,18 +410,7 @@ function TestCreate () {
         </div>
         <div className="graph-display-container-main">
           <div className="test-name-container">
-            {editingTestName ? (
-              <input
-                ref={inputRef}
-                type="text"
-                value={testName}
-                onChange={handleTestNameChange}
-                onBlur={stopEditingTestName}
-                autoFocus
-              />
-            ) : (
-              <span onClick={startEditingTestName}>{testName}</span>
-            )}
+            {testName}
           </div>
           <div className="zoom-buttons">
             <button onClick={handleZoomIn}>+</button>
