@@ -170,7 +170,7 @@ function KnowledgeGraph () {
       }
       console.log('Postuje se:', newGraph)
       try {
-        const response = await axios.post('http://localhost:3001/postGraph', { 
+        const response = await axios.post('http://localhost:3000/postGraph', { 
           method: 'POST',
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -181,7 +181,7 @@ function KnowledgeGraph () {
         console.log(response);
         navigate('/courses')
       } catch (error) {
-        console.error('There was an error sending the test data:', error);
+        console.error('There was an error sending the graph data:', error);
       }
     };
 

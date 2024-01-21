@@ -24,7 +24,6 @@ function TestCreate () {
   const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
   const navigate = useNavigate()  
   const [questionName, setQuestionName] = useState("");
-  const [currentQL, setCurrentQuestionLevel] = useState(1);
   const [nodes, setNodes] = useState(graph.concepts);
   const svgRef = useRef();
   const zoomRef = useRef();
@@ -51,31 +50,6 @@ function TestCreate () {
   const handleConceptChange = (event) => {
     setSelectedConcept(event.target.value);
   };
-
-  const handleQuestionLevelChange = (newValue) => {
-
-    const questionLevelInt = parseInt(newValue, 10); // Convert to integer
-
-    if (!isNaN(questionLevelInt)) {
-        setCurrentQuestionLevel(questionLevelInt);
-
-        let questionLevelObject = {
-            type: 'questionLevel',
-            questionLevel: questionLevelInt
-        };
-
-        const existingObjectIndex = createdObjectList.findIndex(
-            (addedObject) => addedObject.type === 'questionLevel'
-        );
-    
-        if (existingObjectIndex !== -1) {
-            createdObjectList[existingObjectIndex] = questionLevelObject;
-        } else {
-            createdObjectList.push(questionLevelObject);
-        }
-    } else {
-        console.error('Invalid question level:', newValue);    }
-  }
 
   const updateNodeLinks = (nodes) => {
     
@@ -117,29 +91,21 @@ function TestCreate () {
   };
 
   const postQuestion = async () => {
-      const question = {
-        question: questionName,
-        questionLevel: currentQL,
-        rightAnswer: currentRA,
-        wrongAnswer1: currentW1,
-        wrongAnswer2: currentW2,
-        wrongAnswer3: currentW3,
-      };
-      //addNode(questionNode)
 
-      console.log('Postuje se:', createdObjectList)
-      try {
-        const response = await fetch('http://localhost:3000/postURL', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ createdObjectList }),
-        });
-  
-      } catch (error) {
-        console.error('Error with post:', error);
-      }
+    if(selectedConcept === ''){
+      alert('You must select concept!')
+      return;
+    }
+
+    const question = {
+      question: questionName,
+      rightAnswer: currentRA,
+      wrongAnswer1: currentW1,
+      wrongAnswer2: currentW2,
+      wrongAnswer3: currentW3,
+      concept: selectedConcept,
+    };
+      
     };
 
     const postTest = async () => {
@@ -161,7 +127,7 @@ function TestCreate () {
       }
       console.log('Postuje se:', testObject)
       try {
-        const response = await axios.post('http://localhost:3001/finishTest', { 
+        const response = await axios.post('http://localhost:3000/finishTest', { 
           method: 'POST',
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -350,13 +316,6 @@ function TestCreate () {
           <HiddenFormMenu title={"Add RIGHT answer:"} btnName={"Right Answer"}
            typeForm={'rightAnswer'} addObjectToList={addObjectToList}
            currentState={currentRA}/>
-          <div className='question-level-wrapper'>
-          <h4 style={{color: 'white'}}>Question Level:</h4>
-              <input className='question-level' type="number" id="quantity" name="quantity" min="1" max="99"
-              onChange={(e) => handleQuestionLevelChange(e.target.value)}
-              value={currentQL}
-              ></input>
-          </div>
           <div className="concept-select">
             <select value={selectedConcept} onChange={handleConceptChange}>
                 <option value="" disabled>Select Concept</option>
@@ -366,7 +325,6 @@ function TestCreate () {
                     </option>
                 ))}
             </select>
-            {selectedConcept && <p>Selected Concept: {selectedConcept}</p>}
         </div>
           <div className='rb'>
               <h4 style={{color: 'white'}}>Select number of false answers:</h4>

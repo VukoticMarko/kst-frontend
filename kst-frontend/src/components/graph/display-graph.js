@@ -9,7 +9,7 @@ function DisplayGraph({ graph }) {
     const location = useLocation();
 
     const handleClick = () => {
-        navigate(`/createTest/${courseId}`, { state: { graph: graph } });
+        navigate(`/postTest/${courseId}`, { state: { graph: graph } });
     };
 
   return (

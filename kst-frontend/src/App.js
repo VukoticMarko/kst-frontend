@@ -15,6 +15,7 @@ import TestList from './components/test/test-list';
 import TestWrapper from './components/test/test-wrapper';
 import ChooseGraph from './components/graph/choose-graph';
 import TestCreate from './components/test-create/test-create';
+import PostTest from './components/test-create/post-test';
 
 function App() {
 
@@ -75,7 +76,13 @@ function App() {
         </div>  
         }
         />
-        <Route path='/createTest/:courseId' element={
+        <Route path='/postTest/:courseId' element={
+        <div>
+          <PostTest/>
+        </div>  
+        }
+        />
+         <Route path='/createTest/:courseId' element={
         <div>
           <TestCreate/>
         </div>  
