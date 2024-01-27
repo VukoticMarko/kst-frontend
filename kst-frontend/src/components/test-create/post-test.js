@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import  "../login/login.css";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-function PostTest({graph}) {
+function PostTest() {
 
   const navigate = useNavigate()
 
   const [title, setTitle] = useState('')
   const accessToken = localStorage.getItem('accessToken')
   const {courseId} = useParams();
+  const location = useLocation();
+  const graph = location.state?.graph;
 
   const handleClick = async () => {
     try {
@@ -28,6 +30,7 @@ function PostTest({graph}) {
 
       } else {
         console.error('Error with post function.');
+        navigate(`/createTest/${courseId}`, { state: { graph: graph } }); // REMOVE
       }
     } catch (error) {
       console.error('Error during posting:', error);

@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useRef } from "react";
 import Tooltip from "../knowledge-graph/tooltip";
 import axios from 'axios';
+import TestOption from "../test/test-option";
 
 function TestCreate () {
 
@@ -35,8 +36,9 @@ function TestCreate () {
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
-  // Graph logic
+  const [questions, setQuestions] = useState([]);
 
+  // Graph logic
 
   function getEdgePoint(sourceX, sourceY, targetX, targetY, nodeRadius) {
     const dx = targetX - sourceX;
@@ -53,19 +55,29 @@ function TestCreate () {
 
   const updateNodeLinks = (nodes) => {
     
-    if (!Array.isArray(nodes)) {
-      console.error('updateNodeLinks was called without an array');
-      return [];
+    // Clear previous links
+  nodes.forEach(node => {
+    node.links = [];
+  });
+
+  // Create a map for quick access to nodes by questionLevel
+  const nodesByLevel = nodes.reduce((acc, node) => {
+    if (!acc[node.questionLevel]) {
+      acc[node.questionLevel] = [];
     }
-  
-    nodes.forEach(node => {
-      const nextLevelNodes = nodes.filter(n => n.questionLevel === node.questionLevel + 1);
-      console.log(`Current node level: ${node.questionLevel}, Next level nodes:`, nextLevelNodes);
+    acc[node.questionLevel].push(node);
+    return acc;
+  }, {});
+
+  // Connect nodes to the next questionLevel
+  nodes.forEach(node => {
+    const nextLevelNodes = nodesByLevel[node.questionLevel + 1];
+    if (nextLevelNodes) {
       node.links = nextLevelNodes.map(n => n.id);
-      console.log(`Updated links for node ${node.id}:`, node.links);
-    });
-  
-    return nodes;
+    }
+  });
+
+  return nodes;
   };
 
   const handleZoomIn = () => {
@@ -90,6 +102,10 @@ function TestCreate () {
     }
   };
 
+  const addQuestionState = (newQuestion) => {
+    setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
+  };
+
   const postQuestion = async () => {
 
     if(selectedConcept === ''){
@@ -97,15 +113,39 @@ function TestCreate () {
       return;
     }
 
-    const question = {
-      question: questionName,
-      rightAnswer: currentRA,
-      wrongAnswer1: currentW1,
-      wrongAnswer2: currentW2,
-      wrongAnswer3: currentW3,
-      concept: selectedConcept,
-    };
-      
+    let rightAnswer = {
+      text:"Don't know",
+      id: 1
+    }  
+    let wrongAnswer1 = {
+      text:"Web",
+      id: 2
+    } 
+  let question = "What is html"
+  const options =[]
+  options.push(rightAnswer)
+  options.push(wrongAnswer1)
+  
+  const randomquestion = {
+    text: question,
+    id: uuidv4(),
+    options: options,
+    concept: 'html',
+}
+console.log(questions)
+
+    // const question = {
+    //   question: questionName,
+    //   id: uuidv4(),
+    //   rightAnswer: currentRA,
+    //   wrongAnswer1: currentW1,
+    //   wrongAnswer2: currentW2,
+    //   wrongAnswer3: currentW3,
+    //   concept: selectedConcept,
+    // };
+    
+    addQuestionState(randomquestion);
+  
     };
 
     const postTest = async () => {
@@ -298,6 +338,7 @@ function TestCreate () {
       console.log('Lista je:', createdObjectList)
   }
 
+  const handleAnswerSelection = () => {};
   const removeExtraWrongs = () => {
       const filteredList = createdObjectList.filter(
         addedObject => addedObject.type !== 'wrong2' && addedObject.type !== 'wrong3'
@@ -373,6 +414,16 @@ function TestCreate () {
           <div className="zoom-buttons">
             <button onClick={handleZoomIn}>+</button>
             <button onClick={handleZoomOut}>-</button>
+          </div>
+          <div className='test-container'>
+                {questions.map((question) => (
+                <TestOption
+                key={question.id} 
+                qId={question.id}
+                options={question.options}
+                text={question.text}
+                onAnswerSelection={handleAnswerSelection}/>
+                ))}
           </div>
           <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}></svg>
         </div>

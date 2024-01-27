@@ -8,6 +8,7 @@ function TestOption({ qId, options, text, onAnswerSelection }) {
   const [questionTitle] = useState(text);
   const [question_id] = useState(qId);
   //console.log(selectedStudentAnswers)
+  console.log(optionList)
 
   const handleAnswerSelection = (question_id, answer_id) => {
     const answer = {
