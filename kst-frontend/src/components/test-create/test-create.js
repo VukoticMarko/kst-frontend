@@ -10,6 +10,7 @@ import { useRef } from "react";
 import Tooltip from "../knowledge-graph/tooltip";
 import axios from 'axios';
 import TestOption from "../test/test-option";
+import QuestionMark from './question-mark.js';
 
 function TestCreate () {
 
@@ -407,15 +408,10 @@ console.log(questions)
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
-        <div className="graph-display-container-main">
-          <div className="test-name-container">
-            {testName}
-          </div>
-          <div className="zoom-buttons">
-            <button onClick={handleZoomIn}>+</button>
-            <button onClick={handleZoomOut}>-</button>
-          </div>
-          <div className='test-container'>
+        <div className='test-container'>
+        <QuestionMark message="When new questions are added to the test 
+         they will be displayed in this container. This is how the test will
+          look for the students." />
                 {questions.map((question) => (
                 <TestOption
                 key={question.id} 
@@ -424,7 +420,14 @@ console.log(questions)
                 text={question.text}
                 onAnswerSelection={handleAnswerSelection}/>
                 ))}
+        </div>
+        <div className="graph-display-container-main">
+          <div className="test-name-container">
+            {testName}
           </div>
+          <QuestionMark message="This is the chosen space theory graph. Concepts from
+           this graph are displayed in 'Select Concept' menu on the left sidebar.
+            When adding question, you have to choose concept from the graph." />
           <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}></svg>
         </div>
         <Tooltip 
