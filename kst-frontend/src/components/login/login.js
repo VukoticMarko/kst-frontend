@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../header/header';
 import  "./login.css";
 import { useNavigate } from 'react-router-dom';
+import HeaderWithoutLogo from '../header/header-without-logo';
 
 function Login({setAccessToken}) {
 
@@ -43,9 +44,9 @@ function Login({setAccessToken}) {
   const goBack = () => {
       navigation("/")
   }
- // <Header />
   return (
     <div>
+      <HeaderWithoutLogo></HeaderWithoutLogo>
       <div id='login-container'>
         <div>
             <label htmlFor="username"><b>Email:</b></label>

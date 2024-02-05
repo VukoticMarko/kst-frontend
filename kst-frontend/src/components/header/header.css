@@ -10,6 +10,18 @@
     width: 100%;
     z-index: 1000;
   }
+
+  .header-main-without {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    height: 65px;
+    width: 100%;
+    z-index: 1000;
+  }
   
   .app-name {
     font-size: 20px;

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TestOption from './test-option';
 import './test.css';
 import TestFooter from './test-footer';
+import HeaderWithoutLogo from '../header/header-without-logo';
 
 function TestWrapper(){
 
@@ -108,6 +109,7 @@ function TestWrapper(){
 
       return (
         <div>
+            <HeaderWithoutLogo></HeaderWithoutLogo>
             <div className='test-container'>
                 {questions.map((question) => (
                 <TestOption 

@@ -29,7 +29,6 @@ function App() {
           <Route path='/kg' element={<KnowledgeGraph></KnowledgeGraph>} />
           <Route path='/test/:testId' element={
           <div>
-          <Header/>
           <TestWrapper />
           </div>
           } />          

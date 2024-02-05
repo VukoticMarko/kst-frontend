@@ -81,28 +81,6 @@ function TestCreate () {
   return nodes;
   };
 
-  const handleZoomIn = () => {
-    const newZoom = zoomTransform.k * 1.2; // Increase zoom by 20%
-    const updatedTransform = zoomTransform.scale(newZoom);
-    setZoomTransform(updatedTransform);
-    applyZoomTransform(updatedTransform);
-  };
-  
-  const handleZoomOut = () => {
-    const newZoom = zoomTransform.k * 0.8; // Decrease zoom by 20%
-    const updatedTransform = zoomTransform.scale(newZoom);
-    setZoomTransform(updatedTransform);
-    applyZoomTransform(updatedTransform);
-  };
-  
-  // Function to apply zoom transform to the SVG
-  const applyZoomTransform = (transform) => {
-    if (svgRef.current) {
-      d3.select(svgRef.current).select(".graph-display-container-main")
-        .attr("transform", transform);
-    }
-  };
-
   const addQuestionState = (newQuestion) => {
     setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
   };
@@ -186,22 +164,6 @@ console.log(questions)
   useEffect(() => {
 
     const svg = d3.select(svgRef.current);
-
-    // Create a zoom behavior
-    const zoom = d3.zoom()
-    .scaleExtent([0.1, 4]) // Set the minimum and maximum zoom scale
-    .on('zoom', handleZoom);
-
-    // Zoom in the container
-    svg.call(zoom);
-    zoomRef.current = zoom;
-    function handleZoom(event) {
-      const { transform } = event;
-      svg.attr('transform', transform);
-    }
-    svg.call(zoom.on("zoom", (event) => {
-      setZoomTransform(event.transform);
-    }));
 
     const updatedNodes = updateNodeLinks(nodes);
     const linksData = updatedNodes.flatMap(node =>
@@ -349,7 +311,7 @@ console.log(questions)
   }
 
     return (
-     <div className="kg-wrapper">
+     <div className="page">
         <div className="sidebarKG">
           <h3 style={{color: 'white'}}>Test Creator</h3>
           <HiddenFormMenu title={"Add new Question:"} btnName={"New Question"} 
@@ -408,7 +370,7 @@ console.log(questions)
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
-        <div className='test-container'>
+        <div className='test-container-tc'>
         <QuestionMark message="When new questions are added to the test 
          they will be displayed in this container. This is how the test will
           look for the students." />
