@@ -65,6 +65,7 @@ const ChooseGraph = () => {
 
    return (
     <div>
+      <h2 style={{color:"green", marginTop: '75px'}}>Choose Graph that will be used for test creation.</h2>
       <div className="graph-wrapper">
       {graphs.map((graph, index) => (
         <div key={index} className="rectangle">

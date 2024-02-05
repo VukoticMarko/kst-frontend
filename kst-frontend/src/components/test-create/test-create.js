@@ -28,7 +28,6 @@ function TestCreate () {
   const [questionName, setQuestionName] = useState("");
   const [nodes, setNodes] = useState(graph.concepts);
   const svgRef = useRef();
-  const zoomRef = useRef();
   const sidebarWidth = 200;
 
   const [zoomTransform, setZoomTransform] = useState(d3.zoomIdentity);
@@ -236,6 +235,10 @@ console.log(questions)
     };
   }, []);
   
+  const handleRemoveQuestion = (questionId) => {
+    const updatedQuestions = questions.filter(question => question.id !== questionId);
+    setQuestions(updatedQuestions);
+  };
 
   const handleBackButton = () => {
     navigate('/courses')
@@ -375,12 +378,16 @@ console.log(questions)
          they will be displayed in this container. This is how the test will
           look for the students." />
                 {questions.map((question) => (
-                <TestOption
-                key={question.id} 
-                qId={question.id}
-                options={question.options}
-                text={question.text}
-                onAnswerSelection={handleAnswerSelection}/>
+                <div className="question-container">
+                  <TestOption
+                  key={question.id} 
+                  qId={question.id}
+                  options={question.options}
+                  text={question.text}
+                  onAnswerSelection={handleAnswerSelection}>
+                  </TestOption>
+                  <button className="remove-question-button" onClick={() => handleRemoveQuestion(question.id)}> x </button>
+                </div>
                 ))}
         </div>
         <div className="graph-display-container-main">

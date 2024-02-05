@@ -150,4 +150,29 @@
     border-color: #a9a9a9;
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
   }
+
+  .question-container {
+    position: relative;
+  }
+  
+  .remove-question-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  /* Optional: Add some spacing between TestOption and Remove button */
+  .remove-question-button + .test-option {
+    margin-right: 1px; /* Adjust as needed */
+  }
   
