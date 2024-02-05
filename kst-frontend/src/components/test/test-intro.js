@@ -24,10 +24,10 @@ function TestIntroduction() {
                 If you are ready to start and comply with text above press
                 start test button.
             </p>
-        </div>
-        <button onClick={startTest}>Start Test</button>
+      </div>
+        <button className='strt-btn' onClick={startTest}>Start Test</button>
         <div className="container-bottom">
-            <button type="button" className="cancelbtn" onClick={goBack}>Cancel</button>
+            <button type="button" className="cancelbtn" onClick={goBack}>Go Back</button>
         </div>    
     </div>
   );

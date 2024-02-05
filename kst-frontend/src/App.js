@@ -16,6 +16,7 @@ import TestWrapper from './components/test/test-wrapper';
 import ChooseGraph from './components/graph/choose-graph';
 import TestCreate from './components/test-create/test-create';
 import PostTest from './components/test-create/post-test';
+import HeaderWithoutLogo from './components/header/header-without-logo';
 
 function App() {
 
@@ -89,6 +90,7 @@ function App() {
         />
         <Route path='/testIntroduction/:courseId/:testId' element={
         <div>
+          <HeaderWithoutLogo/>
           <TestIntroduction/>
         </div>
           
