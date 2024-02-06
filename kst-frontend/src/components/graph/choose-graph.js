@@ -3,10 +3,12 @@ import DisplayGraph from './display-graph';
 import { v4 as uuidv4 } from 'uuid';
 import Header from '../header/header';
 import './choose-graph.css';
+import axios from 'axios';
 
 const ChooseGraph = () => {
 
    const [graphs, setGraphs] = useState([])
+   const accessToken = localStorage.getItem('accessToken')
 
    useEffect (() => {
 
@@ -58,7 +60,26 @@ const ChooseGraph = () => {
             graphDescription: graphDescription,
             concepts: graphNodes 
         }
-        setGraphs([graph]);
+
+        const fetchData = async () => {
+          try {
+            const response = await axios.get('http://localhost:3000/knowledge-space', {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+              },
+            });
+    
+            const data = response.data;
+            setGraphs(data)
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+        fetchData();
+
+        graphs.push(graph)
+
    }, []);
 
    console.log('Graphs:', graphs)

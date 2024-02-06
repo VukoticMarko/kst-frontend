@@ -3,7 +3,7 @@ import { useState } from "react";
 import HiddenFormMenu from "../form-menu/hidden-form-menu";
 import './test-create.css';
 import * as d3 from 'd3';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {v4 as uuidv4} from 'uuid';
 import { useEffect } from "react";
 import { useRef } from "react";
@@ -16,8 +16,10 @@ function TestCreate () {
 
   const location = useLocation();
   const { graph } = location.state || {};
-  const [testName, setTestName] = useState(graph.graphName);
-
+  const {courseId} = useParams()
+  const [graphName, setGraphName] = useState(graph.graphName);
+  const [editingTestName, setEditingTestName] = useState(false);
+  const inputRef = useRef(null);
   const [selectedConcept, setSelectedConcept] = useState('');
 
   const accessToken = localStorage.getItem('accessToken')
@@ -29,6 +31,8 @@ function TestCreate () {
   const [nodes, setNodes] = useState(graph.concepts);
   const svgRef = useRef();
   const sidebarWidth = 200;
+
+  const [userTest, setTestName] = useState("Please change name of this Test by clicking on this text.");
 
   const [zoomTransform, setZoomTransform] = useState(d3.zoomIdentity);
 
@@ -53,9 +57,36 @@ function TestCreate () {
     setSelectedConcept(event.target.value);
   };
 
+  const handleTestNameChange = (e) => {
+    setTestName(e.target.value);
+  };
+
+  const startEditingTestName = () => {
+    setEditingTestName(true);
+  };
+
+  const stopEditingTestName = () => {
+    setEditingTestName(false);
+  };
+
+  useEffect(() => {
+
+    const handleClickOutside = (e) => {
+      if (inputRef.current && !inputRef.current.contains(e.target)) {
+        stopEditingTestName();
+      }
+    };
+
+    window.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const updateNodeLinks = (nodes) => {
     
-    // Clear previous links
+  // Clear previous links
   nodes.forEach(node => {
     node.links = [];
   });
@@ -83,82 +114,6 @@ function TestCreate () {
   const addQuestionState = (newQuestion) => {
     setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
   };
-
-  const postQuestion = async () => {
-
-    if(selectedConcept === ''){
-      alert('You must select concept!')
-      return;
-    }
-
-    let rightAnswer = {
-      text:"Don't know",
-      id: 1
-    }  
-    let wrongAnswer1 = {
-      text:"Web",
-      id: 2
-    } 
-  let question = "What is html"
-  const options =[]
-  options.push(rightAnswer)
-  options.push(wrongAnswer1)
-  
-  const randomquestion = {
-    text: question,
-    id: uuidv4(),
-    options: options,
-    concept: 'html',
-}
-console.log(questions)
-
-    // const question = {
-    //   question: questionName,
-    //   id: uuidv4(),
-    //   rightAnswer: currentRA,
-    //   wrongAnswer1: currentW1,
-    //   wrongAnswer2: currentW2,
-    //   wrongAnswer3: currentW3,
-    //   concept: selectedConcept,
-    // };
-    
-    addQuestionState(randomquestion);
-  
-    };
-
-    const postTest = async () => {
-
-      // Gather nodes in list
-      const questionNodes = nodes.map(node => ({
-        question: node.question,
-        questionLevel: node.questionLevel,
-        rightAnswer: node.rightAnswer,
-        wrongAnswer1: node.wrongAnswer1,
-        wrongAnswer2: node.wrongAnswer2,
-        wrongAnswer3: node.wrongAnswer3,
-        x: node.x,
-        y: node.y
-      }));
-      const testObject = {
-        testName: testName,
-        questions: questionNodes,
-      }
-      console.log('Postuje se:', testObject)
-      try {
-        const response = await axios.post('http://localhost:3000/finishTest', { 
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ testObject }),
-      });
-        console.log(response);
-        navigate('/courses')
-      } catch (error) {
-        console.error('There was an error sending the test data:', error);
-      }
-    };
 
   useEffect(() => {
 
@@ -244,7 +199,7 @@ console.log(questions)
     navigate('/courses')
   }
 
-    // Object adding logic
+  // Object adding logic
 
   const [createdObjectList, setCreatedObjectList] = useState([])
   let currentQT, currentRA, currentW1, currentW2, currentW3
@@ -313,6 +268,89 @@ console.log(questions)
       setSelectedFalse(1)
   }
 
+  // Question and Test Handling
+  const postQuestion = async () => {
+
+    if(selectedConcept === ''){
+      alert('You must select concept!')
+      return;
+    }
+    const answers = []
+    const newQuestion = {
+      text: '',
+      id: uuidv4(),
+      answers: [],
+      concept: selectedConcept
+    }
+
+    for (let i = 0; i < createdObjectList.length; i++) {
+      const currentItem = createdObjectList[i];
+      if(currentItem.type === 'questionText'){
+        let question = currentItem.userInput
+        newQuestion.text = question;
+      }
+      if(currentItem.type === 'rightAnswer'){
+        let rightAnswer = {
+          text: currentItem.userInput,
+          correct: true,
+        }  
+        newQuestion.answers.push(rightAnswer)
+      }
+      if(currentItem.type === 'wrong1'){
+        let wrong1 = {
+          text: currentItem.userInput,
+          correct: false,
+        } 
+        newQuestion.answers.push(wrong1)
+      }
+      if(currentItem.type === 'wrong2'){
+        let wrong2 = {
+          text: currentItem.userInput,
+          correct: false,
+        } 
+        newQuestion.answers.push(wrong2) 
+      }
+      if(currentItem.type === 'wrong3'){
+        let wrong3 = {
+          text: currentItem.userInput,
+          correct: false,
+        } 
+        newQuestion.answers.push(wrong3) 
+      }
+      
+    }
+
+    setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
+    
+    };
+
+    console.log("questions", questions)
+
+    const postTest = async () => {
+
+      const testObject = {
+        testName: userTest,
+        courseId: parseInt(courseId),
+        questions: questions,
+        knowledgeSpaceId: graph.id
+      }
+      console.log('Postuje se:', testObject)
+      try {
+        const response = await axios.post('http://localhost:3000/tests',
+          testObject, 
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log(response.data);
+        navigate('/courses')
+      } catch (error) {
+        console.error('There was an error sending the graph data:', error);
+      }
+    };
+
     return (
      <div className="page">
         <div className="sidebarKG">
@@ -374,6 +412,20 @@ console.log(questions)
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
         <div className='test-container-tc'>
+        <div className="test-name-container">
+            {editingTestName ? (
+              <input
+                ref={inputRef}
+                type="text"
+                value={userTest}
+                onChange={handleTestNameChange}
+                onBlur={stopEditingTestName}
+                autoFocus
+              />
+            ) : (
+              <span onClick={startEditingTestName}>{userTest}</span>
+            )}
+          </div>
         <QuestionMark message="When new questions are added to the test 
          they will be displayed in this container. This is how the test will
           look for the students." />
@@ -382,7 +434,7 @@ console.log(questions)
                   <TestOption
                   key={question.id} 
                   qId={question.id}
-                  options={question.options}
+                  options={question.answers}
                   text={question.text}
                   onAnswerSelection={handleAnswerSelection}>
                   </TestOption>
@@ -392,7 +444,7 @@ console.log(questions)
         </div>
         <div className="graph-display-container-main">
           <div className="test-name-container">
-            {testName}
+            {graphName}
           </div>
           <QuestionMark message="This is the chosen space theory graph. Concepts from
            this graph are displayed in 'Select Concept' menu on the left sidebar.

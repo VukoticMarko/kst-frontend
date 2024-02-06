@@ -157,7 +157,7 @@ function KnowledgeGraph () {
 
       // Gather nodes in list
       const questionNodes = nodes.map(node => ({
-        id: node.id,
+        key: node.id,
         concept: node.question,
         questionLevel: node.questionLevel,
         x: node.x,
@@ -170,15 +170,15 @@ function KnowledgeGraph () {
       }
       console.log('Postuje se:', newGraph)
       try {
-        const response = await axios.post('http://localhost:3000/postGraph', { 
-          method: 'POST',
+        const response = await axios.post('http://localhost:3000/knowledge-space',
+          newGraph, 
+        {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ newGraph }),
-      });
-        console.log(response);
+        });
+        console.log(response.data);
         navigate('/courses')
       } catch (error) {
         console.error('There was an error sending the graph data:', error);
