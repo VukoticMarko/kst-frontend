@@ -332,8 +332,7 @@ function KnowledgeGraph () {
     navigate('/courses')
   }
 
-    // Object adding logic
-
+  // Object adding logic
   const [createdObjectList, setCreatedObjectList] = useState([])
   let currentQT, currentRA
 
@@ -356,6 +355,15 @@ function KnowledgeGraph () {
       console.log('Lista je:', createdObjectList)
   }
 
+  // Object removing logic
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const removeSelectedNode = () => {
+    if (selectedNodeId) {
+      setNodes((prevNodes) => prevNodes.filter((node) => node.id !== selectedNodeId));
+      setSelectedNodeId(null); // Reset selected node
+    }
+  };
+
     return (
      <div className="kg-wrapper">
         <div className="sidebarKG">
@@ -370,6 +378,18 @@ function KnowledgeGraph () {
               value={currentQL}
               ></input>
           </div>
+          <div className="remove-node-wrap">
+            <label style={{color:'white', marginBottom:'10px'}}>Select Node For Removal:</label>
+            <select value={selectedNodeId} onChange={(e) => setSelectedNodeId(e.target.value)}>
+              <option value="">-- Select Node --</option>
+              {nodes.map((node) => (
+                <option key={node.id} value={node.id}>
+                  {node.question}
+                </option>
+              ))}
+            </select>
+            <button className="remove-node-button" onClick={removeSelectedNode}>Remove Node</button>
+        </div>
           <button className='finish-button' onClick={postQuestion}>Add Node</button>
           <button className='finish-test-button' onClick={postTest}>Finish Graph</button>
           <br></br>
@@ -402,7 +422,7 @@ function KnowledgeGraph () {
           ) : (
             <span onClick={() => setEditingDescription(true)}>{description}</span>
           )}
-</div>
+        </div>
           <div className="zoom-buttons">
             <button onClick={handleZoomIn}>+</button>
             <button onClick={handleZoomOut}>-</button>

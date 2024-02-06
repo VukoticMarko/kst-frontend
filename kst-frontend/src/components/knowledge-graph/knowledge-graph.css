@@ -130,3 +130,14 @@
   width: 100%; /* Make the input take up the full container width */
   box-sizing: border-box; /* Include padding and border in the input width */
 }
+
+.remove-node-wrap {
+  margin-top: 20px;
+}
+
+.remove-node-button{
+  margin-top: 10px;
+  height: 45px;
+  width: 125px;
+  background-color:rgb(255, 93, 93);
+}
