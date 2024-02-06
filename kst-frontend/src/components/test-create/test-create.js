@@ -267,7 +267,7 @@ function TestCreate () {
       setCreatedObjectList(filteredList);
       setSelectedFalse(1)
   }
-
+  console.log('graph', graph)
   // Question and Test Handling
   const postQuestion = async () => {
 
@@ -277,17 +277,24 @@ function TestCreate () {
     }
     const answers = []
     const newQuestion = {
-      text: '',
+      question: '',
       id: uuidv4(),
       answers: [],
-      concept: selectedConcept
+      nodeId: 0
+    }
+
+    for (let i = 0; i < graph.concepts.length; i++) {
+      const currentItem = graph.concepts[i]
+      if(selectedConcept === currentItem.concept){
+        newQuestion.nodeId = parseInt(currentItem.key);
+      }
     }
 
     for (let i = 0; i < createdObjectList.length; i++) {
       const currentItem = createdObjectList[i];
       if(currentItem.type === 'questionText'){
         let question = currentItem.userInput
-        newQuestion.text = question;
+        newQuestion.question = question;
       }
       if(currentItem.type === 'rightAnswer'){
         let rightAnswer = {
@@ -435,7 +442,7 @@ function TestCreate () {
                   key={question.id} 
                   qId={question.id}
                   options={question.answers}
-                  text={question.text}
+                  text={question.question}
                   onAnswerSelection={handleAnswerSelection}>
                   </TestOption>
                   <button className="remove-question-button" onClick={() => handleRemoveQuestion(question.id)}> x </button>
