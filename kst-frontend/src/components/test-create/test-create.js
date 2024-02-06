@@ -45,12 +45,32 @@ function TestCreate () {
   // Graph logic
 
   function getEdgePoint(sourceX, sourceY, targetX, targetY, nodeRadius) {
-    const dx = targetX - sourceX;
-    const dy = targetY - sourceY;
-    const angle = Math.atan2(dy, dx);
-    const x = sourceX + Math.cos(angle) * nodeRadius;
-    const y = sourceY + Math.sin(angle) * nodeRadius;
-    return { x, y };
+    console.log(graph)
+    console.log('koordinate')
+    const numericSourceX = parseFloat(sourceX);
+  const numericSourceY = parseFloat(sourceY);
+  const numericTargetX = parseFloat(targetX);
+  const numericTargetY = parseFloat(targetY);
+
+  // Check for valid numeric values
+  if (isNaN(numericSourceX) || isNaN(numericSourceY) || isNaN(numericTargetX) || isNaN(numericTargetY)) {
+    console.error('Invalid numeric values for coordinates');
+    return { x: 0, y: 0 }; // Provide default values or handle the error accordingly
+  }
+
+   const dx = numericTargetX - numericSourceX;
+   const dy = numericTargetY - numericSourceY;
+   const angle = Math.atan2(dy, dx);
+   const x = numericSourceX + Math.cos(angle) * nodeRadius;
+   const y = numericSourceY + Math.sin(angle) * nodeRadius;
+   return { x, y };
+    // const dx = targetX - sourceX;
+    // const dy = targetY - sourceY;
+    // const angle = Math.atan2(dy, dx);
+    // const x = sourceX + Math.cos(angle) * nodeRadius;
+    // const y = sourceY + Math.sin(angle) * nodeRadius;
+    // console.log(x ,y)
+    // return { x, y };
   }
 
   const handleConceptChange = (event) => {
@@ -86,6 +106,7 @@ function TestCreate () {
 
   const updateNodeLinks = (nodes) => {
     
+  console.log('nodovi', nodes)
   // Clear previous links
   nodes.forEach(node => {
     node.links = [];
@@ -103,8 +124,11 @@ function TestCreate () {
   // Connect nodes to the next questionLevel
   nodes.forEach(node => {
     const nextLevelNodes = nodesByLevel[node.questionLevel + 1];
-    if (nextLevelNodes) {
-      node.links = nextLevelNodes.map(n => n.id);
+    if (nextLevelNodes && Array.isArray(nextLevelNodes)) {
+      nextLevelNodes.forEach(nxNode => {
+        node.links.push(nxNode);
+      });
+      setNodes(nodes)
     }
   });
 
@@ -120,24 +144,25 @@ function TestCreate () {
     const svg = d3.select(svgRef.current);
 
     const updatedNodes = updateNodeLinks(nodes);
+
     const linksData = updatedNodes.flatMap(node =>
-      (node.links || []).map(targetId => {
-        const targetNode = updatedNodes.find(n => n.id === targetId);
-        return targetNode ? { source: node, target: targetNode } : null;
-      }).filter(link => link != null)
+      (node.links || []).map(linkedNode => ({
+        source: node,
+        target: linkedNode
+      }))
     );
 
     const link = svg.selectAll(".link")
       .data(linksData, d => `${d.source.id}-${d.target.id}`);
-
-      link.enter()
-      .append("line")
-      .classed("link", true)
-      .attr("x1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).x)
-      .attr("y1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).y)
-      .attr("x2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).x)
-      .attr("y2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).y)
-      .attr("stroke", "black");
+    
+    link.enter()
+    .append("line")
+    .classed("link", true)
+    .attr("x1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).x)
+    .attr("y1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).y)
+    .attr("x2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).x)
+    .attr("y2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).y)
+    .attr("stroke", "black");
 
     link.exit().remove();
 
