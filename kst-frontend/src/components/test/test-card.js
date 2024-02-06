@@ -9,10 +9,14 @@ function TestCard({ id, title, time, courseId, description }){
     const userRole = localStorage.getItem('userRole');
 
     const EnterTest = () => {
-      if (userRole === 'Professor'){
+      if (userRole === 'Professor' && id === 'creating-test-key'){
         navigate(`/chooseGraph/${courseId}`)
       }else{
-        navigate(`/testIntroduction/${courseId}/${testId}`)
+        if (userRole === 'Professor'){
+          navigate(`/expectedSpace/${courseId}/${testId}`)
+        }else{
+          navigate(`/testIntroduction/${courseId}/${testId}`)
+        }
       }
     };
     

@@ -17,6 +17,7 @@ import ChooseGraph from './components/graph/choose-graph';
 import TestCreate from './components/test-create/test-create';
 import PostTest from './components/test-create/post-test';
 import HeaderWithoutLogo from './components/header/header-without-logo';
+import ExpcetedKnowledgeGraph from './components/knowledge-graph/expected-knowledge-graph/expected-knowledge-graph';
 
 function App() {
 
@@ -64,6 +65,16 @@ function App() {
             <Sidebar />
             <div className="content">
               <TestList/>
+            </div>
+          </div>  
+          }
+        />
+        <Route path='/expectedSpace/:courseId/:testId' element={
+          <div>
+            <Header><LogoutButton/></Header> 
+            <Sidebar />
+            <div className="content">
+              <ExpcetedKnowledgeGraph/>
             </div>
           </div>  
           }
