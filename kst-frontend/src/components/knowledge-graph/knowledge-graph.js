@@ -3,14 +3,10 @@ import { select, event, drag } from 'd3';
 
 
 const KnowledgeGraph = () => {
-  const [nodes, setNodes] = useState([
-    { id: 1, x: 100, y: 100 },
-    { id: 2, x: 300, y: 100 },
-    { id: 3, x: 100, y: 300 },
-    { id: 4, x: 300, y: 300 },
-  ]);
+  const [nodes, setNodes] = useState([]);
   const [links, setLinks] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
+  const [newNodeTitle, setNewNodeTitle] = useState('');
   const svgRef = useRef();
 
   useEffect(() => {
@@ -50,30 +46,47 @@ const KnowledgeGraph = () => {
     }
   };
 
+  const handleAddNode = () => {
+    const newNodeId = nodes.length + 1;
+    setNodes([...nodes, { id: newNodeId, x: 100, y: 100, title: newNodeTitle }]);
+    setNewNodeTitle('');
+  };
+
   return (
-    <svg ref={svgRef} width="1000" height="1000">
-      {links.map((link, index) => (
-        <line
-          key={index}
-          x1={nodes.find((node) => node.id === link.source).x}
-          y1={nodes.find((node) => node.id === link.source).y}
-          x2={nodes.find((node) => node.id === link.target).x}
-          y2={nodes.find((node) => node.id === link.target).y}
-          stroke="black"
-        />
-      ))}
-      {nodes.map((node) => (
-        <circle
-          key={node.id}
-          cx={node.x}
-          cy={node.y}
-          r={20}
-          fill={selectedNode === node.id ? 'red' : 'blue'}
-          onClick={() => handleNodeClick(node.id)}
-          ref={(el) => select(el).datum(node)} // Bind node data to SVG element
-        />
-      ))}
-    </svg>
+    <div>
+      <input
+        type="text"
+        placeholder="Enter node title"
+        value={newNodeTitle}
+        onChange={(e) => setNewNodeTitle(e.target.value)}
+      />
+      <button onClick={handleAddNode}>Add Node</button>
+      <svg ref={svgRef} width="1000" height="1000">
+        {links.map((link, index) => (
+          <line
+            key={index}
+            x1={nodes.find((node) => node.id === link.source).x}
+            y1={nodes.find((node) => node.id === link.source).y}
+            x2={nodes.find((node) => node.id === link.target).x}
+            y2={nodes.find((node) => node.id === link.target).y}
+            stroke="black"
+          />
+        ))}
+        {nodes.map((node) => (
+          <g key={node.id}>
+            <circle
+              cx={node.x}
+              cy={node.y}
+              r={20}
+              fill={selectedNode === node.id ? 'red' : 'blue'}
+              onClick={() => handleNodeClick(node.id)}
+              ref={(el) => select(el).datum(node)} // Bind node data to SVG element
+            />
+            <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.title}</text>
+          </g>
+        ))}
+      </svg>
+    </div>
   );
 };
 
