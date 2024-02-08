@@ -54,14 +54,18 @@ const KnowledgeGraph = () => {
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Enter node title"
-        value={newNodeTitle}
-        onChange={(e) => setNewNodeTitle(e.target.value)}
-      />
-      <button onClick={handleAddNode}>Add Node</button>
-      <svg ref={svgRef} width="1000" height="1000">
+      <div style={{ display: 'flex', marginBottom: '10px' }}>
+        <input
+          type="text"
+          placeholder="Enter node title"
+          value={newNodeTitle}
+          onChange={(e) => setNewNodeTitle(e.target.value)}
+        />
+        <button onClick={handleAddNode}
+                  style={{ marginTop: '8px', marginLeft: "2px" }} // Adjust width here
+                  >Add Node</button>
+      </div>
+      <svg ref={svgRef} width="100%" height="100%">
         {links.map((link, index) => (
           <line
             key={index}
@@ -78,7 +82,7 @@ const KnowledgeGraph = () => {
               cx={node.x}
               cy={node.y}
               r={20}
-              fill={selectedNode === node.id ? 'red' : 'blue'}
+              fill={selectedNode === node.id ? 'red' : '#04AA6D'}
               onClick={() => handleNodeClick(node.id)}
               ref={(el) => select(el).datum(node)} // Bind node data to SVG element
             />
