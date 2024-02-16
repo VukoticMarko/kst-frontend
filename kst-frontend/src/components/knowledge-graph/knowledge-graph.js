@@ -1,17 +1,40 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { select, event, drag } from 'd3';
+import { useNavigate } from 'react-router';
+import HiddenFormMenu from "../form-menu/hidden-form-menu";
+import './knowledge-graph.css';
+import {v4 as uuidv4} from 'uuid';
+import axios from 'axios';
 
+function KnowledgeGraph(){
 
-const KnowledgeGraph = () => {
   const [nodes, setNodes] = useState([]);
   const [links, setLinks] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [newNodeTitle, setNewNodeTitle] = useState('');
+  const [testName, setTestName] = useState("Please change name of this Knowledge Graph by clicking on this text.");
+  const [editingTestName, setEditingTestName] = useState(false);
+  const [description, setDescription] = useState("Please change description of this graph by clicking on this text.");
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
+  const [questionName, setQuestionName] = useState("");
+  const accessToken = localStorage.getItem('accessToken');
+  const sidebarWidth = 200;
+  const inputRef = useRef(null);
+  const navigate = useNavigate()  
   const svgRef = useRef();
 
   useEffect(() => {
-    const svg = select(svgRef.current);
 
+    const updateDimensions = () => {
+      const width = window.innerWidth - sidebarWidth;
+      const height = window.innerHeight;
+      setSvgDimensions({ width, height });
+    };
+
+    window.addEventListener('resize', updateDimensions);
+    updateDimensions();
+
+    const svg = select(svgRef.current);
     // Define drag behavior
     const dragHandler = drag()
       .subject((event, d) => ({ x: d.x, y: d.y }))
@@ -46,26 +69,160 @@ const KnowledgeGraph = () => {
     }
   };
 
-  const handleAddNode = () => {
-    const newNodeId = nodes.length + 1;
-    setNodes([...nodes, { id: newNodeId, x: 100, y: 100, title: newNodeTitle }]);
-    setNewNodeTitle('');
+  // Object adding logic
+  const [createdObjectList, setCreatedObjectList] = useState([])
+
+  const postQuestion = async () => {
+    const questionNode = {
+      question: questionName,
+      links: []
+    };
+    addNode(questionNode)
   };
 
+  const postTest = async () => {
+
+    // Gather nodes in list
+    const questionNodes = nodes.map(node => ({
+      key: node.id,
+      concept: node.question,
+      questionLevel: node.questionLevel,
+      x: node.x,
+      y: node.y
+    }));
+    const newGraph = {
+      graphName: testName,
+      graphDescription: description,
+      concepts: questionNodes,
+    }
+    console.log('Postuje se:', newGraph)
+    try {
+      const response = await axios.post('http://localhost:3000/knowledge-space',
+        newGraph, 
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response.data);
+      navigate('/courses')
+    } catch (error) {
+      console.error('There was an error sending the graph data:', error);
+    }
+  };
+
+  const getRandomX = () => Math.random() * (svgDimensions.width - sidebarWidth);
+  const getRandomY = () => Math.random() * svgDimensions.height;
+
+  const addNode = (node) => {
+    const newNodeId = nodes.length + 1;
+    console.log(node)
+    setNodes([...nodes, { id: newNodeId, x: getRandomX(), y: getRandomY(), title: node.question }]);
+    console.log(nodes)
+  };
+
+  const addObjectToList = (object) => {
+    let fqt = 0
+    createdObjectList.forEach(addedObject => {
+      if(addedObject.type === 'questionText' && object.type === 'questionText'){
+        fqt = 1
+        currentQT = object.userInput
+        setQuestionName(currentQT)
+        addedObject.userInput = object.userInput
+      }
+    });
+
+    if(fqt === 0 && object.type === 'questionText'){
+      currentQT = object.userInput
+      setQuestionName(currentQT)
+      createdObjectList.push(object)
+    }
+    console.log('Lista je:', createdObjectList)
+  }
+
+  // Object removing logic
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const removeSelectedNode = () => {
+     if (selectedNodeId) {
+       setNodes((prevNodes) => prevNodes.filter((node) => node.id !== selectedNodeId));
+       setSelectedNodeId(null); // Reset selected node
+     }
+  };
+
+  // Name of the test change
+  const handleTestNameChange = (e) => {
+    setTestName(e.target.value);
+  };
+
+  const startEditingTestName = () => {
+    setEditingTestName(true);
+  };
+
+  const stopEditingTestName = () => {
+    setEditingTestName(false);
+  };
+
+  const handleBackButton = () => {
+    navigate('/courses')
+  }
+  let currentQT
+
   return (
-    <div>
-      <div style={{ display: 'flex', marginBottom: '10px' }}>
-        <input
-          type="text"
-          placeholder="Enter node title"
-          value={newNodeTitle}
-          onChange={(e) => setNewNodeTitle(e.target.value)}
-        />
-        <button onClick={handleAddNode}
-                  style={{ marginTop: '8px', marginLeft: "2px" }} // Adjust width here
-                  >Add Node</button>
+    <div className="kg-wrapper">
+      <div className="sidebarKG">
+          <h3 style={{color: 'white'}}>Knowledge Graph Creator</h3>
+          <HiddenFormMenu title={"Add new Concept:"} btnName={"New Concept"} 
+            typeForm={'questionText'} addObjectToList={addObjectToList} 
+            currentState={currentQT}/>
+          <div className='question-level-wrapper'>
+          </div>
+          <div className="remove-node-wrap">
+            <label style={{color:'white', marginBottom:'10px'}}>Select Node For Removal:</label>
+            <select value={selectedNodeId} onChange={(e) => setSelectedNodeId(e.target.value)}>
+              <option value="">-- Select Node --</option>
+              {nodes.map((node) => (
+                <option key={node.id} value={node.id}>
+                  {node.question}
+                </option>
+              ))}
+            </select>
+            <button className="remove-node-button" onClick={removeSelectedNode}>Remove Node</button>
+        </div>
+          <button className='finish-button' onClick={postQuestion}>Add Node</button>
+          <button className='finish-test-button' onClick={postTest}>Finish Graph</button>
+          <br></br>
+          <button className='back-button' onClick={handleBackButton}>Go Back</button>
       </div>
-      <svg ref={svgRef} width="100%" height="100%">
+      <div className="graph-display-container-main">
+          <div className="test-name-container">
+            {editingTestName ? (
+              <input
+                ref={inputRef}
+                type="text"
+                value={testName}
+                onChange={handleTestNameChange}
+                onBlur={stopEditingTestName}
+                autoFocus
+              />
+            ) : (
+              <span onClick={startEditingTestName}>{testName}</span>
+            )}
+          </div>
+          <div className="description-edit-container">
+          {editingDescription ? (
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              onBlur={() => setEditingDescription(false)}
+              autoFocus
+            />
+          ) : (
+            <span onClick={() => setEditingDescription(true)}>{description}</span>
+          )}
+        </div>
+      <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}>
         {links.map((link, index) => (
           <line
             key={index}
@@ -86,10 +243,11 @@ const KnowledgeGraph = () => {
               onClick={() => handleNodeClick(node.id)}
               ref={(el) => select(el).datum(node)} // Bind node data to SVG element
             />
-            <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.title}</text>
+            <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.title.question}</text>
           </g>
         ))}
       </svg>
+      </div>
     </div>
   );
 };
