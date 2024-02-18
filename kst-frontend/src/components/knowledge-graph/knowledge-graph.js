@@ -116,12 +116,11 @@ function KnowledgeGraph(){
   const getRandomY = () => Math.random() * svgDimensions.height;
 
   const addNode = (node) => {
-    const newNodeId = nodes.length + 1;
-    console.log(node)
+    const newNodeId = uuidv4();
     setNodes([...nodes, { id: newNodeId, x: getRandomX(), y: getRandomY(), title: node.question }]);
-    console.log(nodes)
-  };
 
+  };
+  console.log(nodes)
   const addObjectToList = (object) => {
     let fqt = 0
     createdObjectList.forEach(addedObject => {
@@ -138,16 +137,26 @@ function KnowledgeGraph(){
       setQuestionName(currentQT)
       createdObjectList.push(object)
     }
-    console.log('Lista je:', createdObjectList)
   }
 
   // Object removing logic
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const removeSelectedNode = () => {
-     if (selectedNodeId) {
-       setNodes((prevNodes) => prevNodes.filter((node) => node.id !== selectedNodeId));
-       setSelectedNodeId(null); // Reset selected node
-     }
+
+    if (selectedNodeId) {
+      console.log(selectedNodeId)
+      const idToRemove = selectedNodeId;
+      // Filter out the node
+      setNodes(prevNodes => prevNodes.filter(node => node.id !== idToRemove));
+
+      // Filter out the links associated with the node
+      setLinks(prevLinks => prevLinks.filter(
+        link => link.source !== idToRemove && link.target !== idToRemove
+      ));
+
+      // Reset selected node
+      setSelectedNodeId(null);
+    }
   };
 
   // Name of the test change
@@ -167,7 +176,7 @@ function KnowledgeGraph(){
     navigate('/courses')
   }
   let currentQT
-
+console.log(selectedNodeId)
   return (
     <div className="kg-wrapper">
       <div className="sidebarKG">
