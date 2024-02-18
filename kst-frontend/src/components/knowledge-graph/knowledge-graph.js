@@ -72,7 +72,7 @@ function KnowledgeGraph(){
   // Object adding logic
   const [createdObjectList, setCreatedObjectList] = useState([])
 
-  const postQuestion = async () => {
+  const postQuestion = async () => { // Add node to the graph
     const questionNode = {
       question: questionName,
       links: []
@@ -80,20 +80,20 @@ function KnowledgeGraph(){
     addNode(questionNode)
   };
 
-  const postTest = async () => {
+  const postTest = async () => { // Finish making graph
 
     // Gather nodes in list
     const questionNodes = nodes.map(node => ({
       key: node.id,
       concept: node.question,
-      questionLevel: node.questionLevel,
       x: node.x,
-      y: node.y
+      y: node.y,
     }));
     const newGraph = {
       graphName: testName,
       graphDescription: description,
       concepts: questionNodes,
+      links: links
     }
     console.log('Postuje se:', newGraph)
     try {
@@ -140,7 +140,7 @@ function KnowledgeGraph(){
   }
 
   // Object removing logic
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [selectedNodeId, setSelectedNodeId] = useState('');
   const removeSelectedNode = () => {
 
     if (selectedNodeId) {
@@ -155,7 +155,7 @@ function KnowledgeGraph(){
       ));
 
       // Reset selected node
-      setSelectedNodeId(null);
+      setSelectedNodeId('');
     }
   };
 
@@ -176,7 +176,7 @@ function KnowledgeGraph(){
     navigate('/courses')
   }
   let currentQT
-console.log(selectedNodeId)
+
   return (
     <div className="kg-wrapper">
       <div className="sidebarKG">
