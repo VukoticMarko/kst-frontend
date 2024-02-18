@@ -183,7 +183,7 @@ function KnowledgeGraph(){
               <option value="">-- Select Node --</option>
               {nodes.map((node) => (
                 <option key={node.id} value={node.id}>
-                  {node.question}
+                  {node.title}
                 </option>
               ))}
             </select>
@@ -243,7 +243,7 @@ function KnowledgeGraph(){
               onClick={() => handleNodeClick(node.id)}
               ref={(el) => select(el).datum(node)} // Bind node data to SVG element
             />
-            <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.title.question}</text>
+            <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.title}</text>
           </g>
         ))}
       </svg>
