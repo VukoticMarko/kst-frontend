@@ -1,19 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { select, event, drag } from 'd3';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import HiddenFormMenu from "../form-menu/hidden-form-menu";
 import './knowledge-graph.css';
 import {v4 as uuidv4} from 'uuid';
 import axios from 'axios';
 
-function KnowledgeGraph(){
-
-  const [nodes, setNodes] = useState([]);
-  const [links, setLinks] = useState([]);
+function EditKnowledgeGraph(){
+  const location = useLocation();
+  const { graph } = location.state || {};
+  const [nodes, setNodes] = useState(graph.concepts);
+  const [links, setLinks] = useState(graph.links);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [testName, setTestName] = useState("Please change name of this Knowledge Graph by clicking on this text.");
+  const [testName, setTestName] = useState(graph.graphName);
   const [editingTestName, setEditingTestName] = useState(false);
-  const [description, setDescription] = useState("Please change description of this graph by clicking on this text.");
+  const [description, setDescription] = useState(graph.graphDescription);
   const [editingDescription, setEditingDescription] = useState(false);
   const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
   const [questionName, setQuestionName] = useState("");
@@ -89,16 +90,16 @@ function KnowledgeGraph(){
       x: node.x,
       y: node.y,
     }));
-    const newGraph = {
+    const editedGraph = {
       graphName: testName,
       graphDescription: description,
       concepts: questionNodes,
       links: links
     }
-    console.log('Postuje se:', newGraph)
+    console.log('Edituje se:', editedGraph)
     try {
-      const response = await axios.post('http://localhost:3000/knowledge-space',
-        newGraph, 
+      const response = await axios.post('http://localhost:3000/edit-knowledge-space',
+        editedGraph, 
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -106,9 +107,9 @@ function KnowledgeGraph(){
         },
       });
       console.log(response.data);
-      navigate('/courses')
+      navigate('/graphs')
     } catch (error) {
-      console.error('There was an error sending the graph data:', error);
+      console.error('There was an error sending the new graph data:', error);
     }
   };
 
@@ -175,7 +176,7 @@ function KnowledgeGraph(){
     navigate('/graphs')
   }
   let currentQT
-console.log(links)
+
   return (
     <div className="kg-wrapper">
       <div className="sidebarKG">
@@ -198,7 +199,7 @@ console.log(links)
             <button className="remove-node-button" onClick={removeSelectedNode}>Remove Node</button>
         </div>
           <button className='finish-button' onClick={postQuestion}>Add Node</button>
-          <button className='finish-test-button' onClick={postTest}>Finish Graph</button>
+          <button className='finish-test-button' onClick={postTest}>Finish Editing</button>
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
       </div>
@@ -230,34 +231,33 @@ console.log(links)
             <span onClick={() => setEditingDescription(true)}>{description}</span>
           )}
         </div>
-      <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}>
-        {links.map((link, index) => (
-          <line
+        <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}>
+        {(links || []).map((link, index) => (
+            <line
             key={index}
             x1={nodes.find((node) => node.id === link.source).x}
             y1={nodes.find((node) => node.id === link.source).y}
             x2={nodes.find((node) => node.id === link.target).x}
             y2={nodes.find((node) => node.id === link.target).y}
             stroke="black"
-          />
+            />
         ))}
         {nodes.map((node) => (
-          <g key={node.id}>
+            <g key={node.id}>
             <circle
-              cx={node.x}
-              cy={node.y}
-              r={20}
-              fill={selectedNode === node.id ? 'red' : '#04AA6D'}
-              onClick={() => handleNodeClick(node.id)}
-              ref={(el) => select(el).datum(node)} // Bind node data to SVG element
+                cx={node.x}
+                cy={node.y}
+                r={20}
+                fill={selectedNode === node.id ? 'red' : '#04AA6D'}
+                onClick={() => handleNodeClick(node.id)}
             />
             <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.concept}</text>
-          </g>
+            </g>
         ))}
-      </svg>
+        </svg>
       </div>
     </div>
   );
 };
 
-export default KnowledgeGraph;
+export default EditKnowledgeGraph;

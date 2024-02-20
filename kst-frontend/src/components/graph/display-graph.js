@@ -2,14 +2,27 @@ import React, { useEffect, useRef } from 'react';
 import './display-graph.css';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-function DisplayGraph({ graph }) {
+function DisplayGraph({ graph, code }) {
 
+  // Code 0 = Default creating graph card
+  // Code 1 = General Graph Menu
+  // Code 2 = Creating tests flow
+  
     const navigate = useNavigate();
     const {courseId} = useParams();
     const location = useLocation();
-
+    
     const handleClick = () => {
+      if(code === 0){
+        navigate(`/kg`)
+      }
+      if(code === 1){
+        navigate(`/editGraph`, {state: {graph: graph}})
+      }
+
+      if(code === 2){
         navigate(`/createTest/${courseId}`, { state: { graph: graph } });
+      }
     };
 
   return (

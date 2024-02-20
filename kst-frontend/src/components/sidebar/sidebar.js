@@ -31,7 +31,7 @@ function Sidebar() {
   };
 
   const goToGraphPage = () => {
-    navigate('/kg');
+    navigate('/graphs');
   };
 
   const userRole = localStorage.getItem('userRole');
@@ -47,7 +47,7 @@ function Sidebar() {
       {userRole === 'Professor' && (
       <div onClick={goToGraphPage}>
         <img className='graph' style={{ cursor: 'pointer' }} src={GraphImage} alt="Graph" />
-        <p style={{color: 'white', cursor: 'pointer'}}>Create New Graphs and Concepts</p>
+        <p style={{color: 'white', cursor: 'pointer'}}>Create and Edit Graphs and Concepts</p>
       </div>
       )}
     </div>

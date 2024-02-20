@@ -18,6 +18,7 @@ import TestCreate from './components/test-create/test-create';
 import PostTest from './components/test-create/post-test';
 import HeaderWithoutLogo from './components/header/header-without-logo';
 import ExpcetedKnowledgeGraph from './components/knowledge-graph/expected-knowledge-graph/expected-knowledge-graph';
+import EditKnowledgeGraph from './components/knowledge-graph/edit-knowledge-graph';
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
     <Router>
       <Routes>
           <Route path='/kg' element={<KnowledgeGraph></KnowledgeGraph>} />
+          <Route path='/editGraph' element={<EditKnowledgeGraph></EditKnowledgeGraph>}/>
           <Route path='/test/:testId' element={
           <div>
           <TestWrapper />
@@ -79,11 +81,19 @@ function App() {
           </div>  
           }
         />
+        <Route path='/graphs' element={
+        <div>
+          <Header />
+          <Sidebar />
+          <div className='content'><ChooseGraph code={1}></ChooseGraph></div>
+        </div>  
+        }
+        />
         <Route path='/chooseGraph/:courseId' element={
         <div>
           <Header />
           <Sidebar />
-          <div className='content'><ChooseGraph></ChooseGraph></div>
+          <div className='content'><ChooseGraph code={2}></ChooseGraph></div>
         </div>  
         }
         />

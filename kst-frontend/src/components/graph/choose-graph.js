@@ -5,13 +5,30 @@ import Header from '../header/header';
 import './choose-graph.css';
 import axios from 'axios';
 
-const ChooseGraph = () => {
+const ChooseGraph = ({code}) => {
+
+  // Code 0 = Default creating graph card
+  // Code 1 = General Graph Menu
+  // Code 2 = Creating tests flow
 
    const [graphs, setGraphs] = useState([])
+   const [text, setText] = useState('Choose Graph that will be used for test creation.')
    const accessToken = localStorage.getItem('accessToken')
+
+   // Default card
+   const defaultTitle = 'Create New Graph';
+   const defaultDescription = 'By pressing this card you will be taken to the new graph creation screen.';
+   const card = {
+     id: 999999999,
+     graphName: defaultTitle,
+     graphDescription: defaultDescription,
+   }
 
    useEffect (() => {
 
+    if(code === 1){
+      setText('Choose which Graph to edit, or you can create a new one.')
+    }
         const node = {
             key: uuidv4(),
             concept: 'html',
@@ -26,7 +43,6 @@ const ChooseGraph = () => {
             questionLevel: 2,
             x: 275,
             y: 420,
-            links: []
         } 
         const node3 = {
             key: uuidv4(),
@@ -34,7 +50,6 @@ const ChooseGraph = () => {
             questionLevel: 3,
             x: 550,
             y: 265,
-            links: []
         }
         const node4 = {
             key: uuidv4(),
@@ -42,11 +57,14 @@ const ChooseGraph = () => {
             questionLevel: 4,
             x: 550,
             y: 525,
-            links: []
         }
-        node.links = [node2.key];
-        node2.links = [node3.key];
-        node3.links = [node4.key];
+        let links = []
+        let linkObj1 = {
+          source: node.id,
+          taget: node2.id
+        }
+        links.push(linkObj1)
+
         let graphNodes = []
         graphNodes.push(node)
         graphNodes.push(node2)
@@ -55,30 +73,31 @@ const ChooseGraph = () => {
         const graphTitle = 'My beautiful first graph';
         const graphDescription = 'This is my first static graph :)';
         const graph = {
-            id: 1,
+            id: 321341421,
             graphName: graphTitle,
             graphDescription: graphDescription,
-            concepts: graphNodes 
+            concepts: graphNodes,
+            links: links
         }
+      
+      const fetchData = async () => {
+        try {
+          const response = await axios.get('http://localhost:3000/knowledge-space', {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          });
+  
+          const data = response.data;
+          setGraphs(data)
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+      fetchData();
 
-        const fetchData = async () => {
-          try {
-            const response = await axios.get('http://localhost:3000/knowledge-space', {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-              },
-            });
-    
-            const data = response.data;
-            setGraphs(data)
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        };
-        fetchData();
-
-        graphs.push(graph)
+      graphs.push(graph)
 
    }, []);
 
@@ -86,12 +105,14 @@ const ChooseGraph = () => {
 
    return (
     <div>
-      <h2 style={{color:"green", marginTop: '75px'}}>Choose Graph that will be used for test creation.</h2>
+      <h2 style={{color:"green", marginTop: '75px'}}>{text}</h2>
       <div className="graph-wrapper">
+      <div className='create-new-graph-div'><DisplayGraph graph={card} code={0}></DisplayGraph></div>
       {graphs.map((graph, index) => (
         <div key={index} className="rectangle">
             <DisplayGraph
             graph={graph}
+            code={code}
             />
           </div>
         ))}
