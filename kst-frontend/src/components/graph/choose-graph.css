@@ -1,10 +1,50 @@
-.rectangle {
-    width: 300px; 
-    height: 400px; 
-    position: relative;
-  }
-
 .graph-wrapper {
-    margin-top: 70px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 10px;
+  padding: 20px;
+  align-items: flex-start;
 }
-  
+
+.rectangle {
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  width: calc(33.333% - 20px);
+  height: 200px;
+  background-color: white;
+  margin: 5px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.create-new-graph-div {
+  box-shadow: 0 4px 8px 0 rgba(255, 99, 71, 0.5);
+  transition: 0.3s;
+  width: calc(33.333% - 20px);
+  height: 200px;
+  background-color: white;
+  margin: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.create-new-graph-div:hover {
+  box-shadow: 0 8px 16px 0 rgba(255, 99, 71, 0.5);
+}
+
+@media (max-width: 768px) {
+  .rectangle, .create-new-graph-div {
+      width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .rectangle, .create-new-graph-div {
+      width: 100%;
+  }
+}

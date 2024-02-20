@@ -30,31 +30,26 @@ const ChooseGraph = ({code}) => {
       setText('Choose which Graph to edit, or you can create a new one.')
     }
         const node = {
-            key: uuidv4(),
+            id: uuidv4(),
             concept: 'html',
-            questionLevel: 1,
             x: 250,
             y: 250,
-            links: []
         }
         const node2 = {
-            key: uuidv4(),
-            concept: 'css',
-            questionLevel: 2,
+          id: uuidv4(),
+          concept: 'css',
             x: 275,
             y: 420,
         } 
         const node3 = {
-            key: uuidv4(),
-            concept: 'js',
-            questionLevel: 3,
+          id: uuidv4(),
+          concept: 'js',
             x: 550,
             y: 265,
         }
         const node4 = {
-            key: uuidv4(),
-            concept: 'react',
-            questionLevel: 4,
+          id: uuidv4(),
+          concept: 'react',
             x: 550,
             y: 525,
         }
@@ -79,6 +74,7 @@ const ChooseGraph = ({code}) => {
             concepts: graphNodes,
             links: links
         }
+        console.log('Static graph ', graph)
       
       const fetchData = async () => {
         try {
@@ -90,14 +86,14 @@ const ChooseGraph = ({code}) => {
           });
   
           const data = response.data;
-          setGraphs(data)
+          setGraphs([graph, ...data])
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       };
       fetchData();
 
-      graphs.push(graph)
+   
 
    }, []);
 

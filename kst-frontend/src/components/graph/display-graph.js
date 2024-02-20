@@ -24,7 +24,7 @@ function DisplayGraph({ graph, code }) {
         navigate(`/createTest/${courseId}`, { state: { graph: graph } });
       }
     };
-
+    
   return (
     <div className="container" key={graph.id} style={{ maxWidth: "400px", position: "left", cursor: 'pointer', margin: "7px"}} onClick={handleClick}>
       <section className="section" style={{ padding: "15px"}}>

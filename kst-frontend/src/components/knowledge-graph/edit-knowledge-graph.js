@@ -9,8 +9,8 @@ import axios from 'axios';
 function EditKnowledgeGraph(){
   const location = useLocation();
   const { graph } = location.state || {};
-  const [nodes, setNodes] = useState(graph.concepts);
-  const [links, setLinks] = useState(graph.links);
+  const [nodes, setNodes] = useState([]);
+  const [links, setLinks] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
   const [testName, setTestName] = useState(graph.graphName);
   const [editingTestName, setEditingTestName] = useState(false);
@@ -23,8 +23,21 @@ function EditKnowledgeGraph(){
   const inputRef = useRef(null);
   const navigate = useNavigate()  
   const svgRef = useRef();
+  console.log('Received graph: ', graph)
+  console.log('Nodes of the graph ', nodes)
+  console.log('Links in the graph ', links)
 
   useEffect(() => {
+    if (nodes.length > 0) {
+      const svg = select(svgRef.current);
+      // Define and apply drag behavior...
+    }
+  }, [nodes]);
+
+  useEffect(() => {
+    
+    setNodes(graph.concepts)
+    setLinks(graph.links)
 
     const updateDimensions = () => {
       const width = window.innerWidth - sidebarWidth;
@@ -36,6 +49,8 @@ function EditKnowledgeGraph(){
     updateDimensions();
 
     const svg = select(svgRef.current);
+
+    
     // Define drag behavior
     const dragHandler = drag()
       .subject((event, d) => ({ x: d.x, y: d.y }))
@@ -43,6 +58,7 @@ function EditKnowledgeGraph(){
         select(event.sourceEvent.target).classed('active', true);
       })
       .on('drag', (event, d) => {
+        console.log(d);
         const draggedNodeIndex = nodes.findIndex((node) => node.id === d.id);
         if (draggedNodeIndex !== -1) {
           const newNodes = [...nodes];
@@ -232,29 +248,35 @@ function EditKnowledgeGraph(){
           )}
         </div>
         <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}>
-        {(links || []).map((link, index) => (
+        {links?.map((link, index) => {
+          const sourceNode = nodes.find((node) => node.id === link.source);
+          const targetNode = nodes.find((node) => node.id === link.target);
+
+          // Render the line only if both nodes exist
+          return sourceNode && targetNode ? (
             <line
-            key={index}
-            x1={nodes.find((node) => node.id === link.source).x}
-            y1={nodes.find((node) => node.id === link.source).y}
-            x2={nodes.find((node) => node.id === link.target).x}
-            y2={nodes.find((node) => node.id === link.target).y}
-            stroke="black"
+              key={index}
+              x1={sourceNode.x}
+              y1={sourceNode.y}
+              x2={targetNode.x}
+              y2={targetNode.y}
+              stroke="black"
             />
-        ))}
+          ) : null;
+        })}
         {nodes.map((node) => (
-            <g key={node.id}>
+          <g key={node.id}>
             <circle
-                cx={node.x}
-                cy={node.y}
-                r={20}
-                fill={selectedNode === node.id ? 'red' : '#04AA6D'}
-                onClick={() => handleNodeClick(node.id)}
+              cx={node.x}
+              cy={node.y}
+              r={20}
+              fill={selectedNode === node.id ? 'red' : '#04AA6D'}
+              onClick={() => handleNodeClick(node.id)}
             />
             <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.concept}</text>
-            </g>
+          </g>
         ))}
-        </svg>
+      </svg>
       </div>
     </div>
   );
