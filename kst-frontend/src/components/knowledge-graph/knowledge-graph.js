@@ -120,7 +120,7 @@ function KnowledgeGraph(){
     setNodes([...nodes, { id: newNodeId, x: getRandomX(), y: getRandomY(), title: node.question }]);
 
   };
-  console.log(nodes)
+  
   const addObjectToList = (object) => {
     let fqt = 0
     createdObjectList.forEach(addedObject => {
@@ -144,7 +144,6 @@ function KnowledgeGraph(){
   const removeSelectedNode = () => {
 
     if (selectedNodeId) {
-      console.log(selectedNodeId)
       const idToRemove = selectedNodeId;
       // Filter out the node
       setNodes(prevNodes => prevNodes.filter(node => node.id !== idToRemove));
