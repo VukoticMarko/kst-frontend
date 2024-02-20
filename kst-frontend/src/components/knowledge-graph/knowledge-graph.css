@@ -1,0 +1,143 @@
+.graph-display-container-main {
+    border: 2px solid black;
+    margin-left: 200px;
+    max-width: calc(100% - 200px);
+    height: 100vh; 
+  }
+  
+  .kg-wrapper {
+    height: 100vh;
+    width: 100%;
+  }
+  
+  .link { /*vertice*/
+    stroke: black;
+  }
+  
+  .node {
+    fill: blue;
+    stroke: black;
+    width: 100px; 
+    height: 60px; 
+  }
+  
+  .react-flow__edge-path {
+    stroke: black;
+    stroke-width: 2px;
+    fill: none; }
+  
+  .react-flow__node-default {
+    background-color: #fff;
+    border: 1px solid #222;
+    padding: 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    width: 150px; 
+    overflow: hidden; }
+  
+  .question-level-wrapper {
+    margin-top: 50px;
+    width: 60px;
+    margin-left: 65px;
+    width: 60px;
+  }
+  
+  .sidebarKG {
+    position: sticky;
+    width: 200px;
+    height: 100vh;
+    background-color: #334134; 
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    z-index: 100;
+    padding-top: 20px;
+    transition: margin-top 0.3s;
+  }
+  
+  .rb {
+    margin-top: 20px;
+  }
+  
+  .finish-button {
+    margin-top: 90px;
+    color: black;
+    background-color: rgb(196, 213, 69);
+    width: 88px;
+  }
+  
+  .finish-test-button {
+    margin-top: 90px;
+    color: black;
+    background-color: rgb(27, 110, 0);
+    width: 88px;
+  }
+  
+  .back-button {
+    color: white;
+    background-color: red;
+    width: 88px;
+  }
+  
+  /* CSS for small circular zoom buttons */
+  .zoom-buttons {
+    position: absolute;
+    margin-left: 205px;
+    bottom: 20px; 
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .zoom-buttons button {
+    width: 40px; 
+    height: 40px;
+    border: none;
+    border-radius: 50%; 
+    background-color: #3498db;
+    color: black;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 10px; 
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+  }
+  
+  .zoom-buttons button:hover {
+    background-color: #2980b9;
+  }
+  
+  .description-edit-container {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1000; 
+    background: white;
+    padding: 10px; /* Optional: for spacing */
+    border-radius: 5px; /* Optional: if you want rounded corners */
+    max-width: 200px; /* Optional: prevent it from getting too wide */
+  }
+  
+  .description-edit-container span,
+  .description-edit-container input {
+    cursor: pointer;
+  }
+  
+  .description-edit-container input {
+    width: 100%; /* Make the input take up the full container width */
+    box-sizing: border-box; /* Include padding and border in the input width */
+  }
+  
+  .remove-node-wrap {
+    margin-top: 20px;
+  }
+  
+  .remove-node-button{
+    margin-top: 10px;
+    height: 45px;
+    width: 125px;
+    background-color:rgb(255, 93, 93);
+  }
