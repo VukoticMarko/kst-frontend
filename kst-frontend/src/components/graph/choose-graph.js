@@ -32,26 +32,26 @@ const ChooseGraph = ({code}) => {
         const node = {
             id: uuidv4(),
             concept: 'html',
-            x: 250,
-            y: 250,
+            x: 250.12,
+            y: 250.030,
         }
         const node2 = {
           id: uuidv4(),
           concept: 'css',
-            x: 275,
-            y: 420,
+            x: 275.00,
+            y: 420.00,
         } 
         const node3 = {
           id: uuidv4(),
           concept: 'js',
-            x: 550,
-            y: 265,
+            x: 550.00,
+            y: 265.43,
         }
         const node4 = {
           id: uuidv4(),
           concept: 'react',
-            x: 550,
-            y: 525,
+            x: 550.00,
+            y: 525.00,
         }
         let links = []
         let linkObj1 = {

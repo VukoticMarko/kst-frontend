@@ -9,8 +9,8 @@ import axios from 'axios';
 function EditKnowledgeGraph(){
   const location = useLocation();
   const { graph } = location.state || {};
-  const [nodes, setNodes] = useState([]);
-  const [links, setLinks] = useState([]);
+  const [nodes, setNodes] = useState(graph.concepts);
+  const [links, setLinks] = useState(graph.links);
   const [selectedNode, setSelectedNode] = useState(null);
   const [testName, setTestName] = useState(graph.graphName);
   const [editingTestName, setEditingTestName] = useState(false);
@@ -28,16 +28,10 @@ function EditKnowledgeGraph(){
   console.log('Links in the graph ', links)
 
   useEffect(() => {
-    if (nodes.length > 0) {
-      const svg = select(svgRef.current);
-      // Define and apply drag behavior...
-    }
-  }, [nodes]);
 
-  useEffect(() => {
+  }, []);
     
-    setNodes(graph.concepts)
-    setLinks(graph.links)
+  useEffect(() => {
 
     const updateDimensions = () => {
       const width = window.innerWidth - sidebarWidth;
@@ -49,7 +43,6 @@ function EditKnowledgeGraph(){
     updateDimensions();
 
     const svg = select(svgRef.current);
-
     
     // Define drag behavior
     const dragHandler = drag()
@@ -58,21 +51,20 @@ function EditKnowledgeGraph(){
         select(event.sourceEvent.target).classed('active', true);
       })
       .on('drag', (event, d) => {
-        console.log(d);
         const draggedNodeIndex = nodes.findIndex((node) => node.id === d.id);
         if (draggedNodeIndex !== -1) {
           const newNodes = [...nodes];
           newNodes[draggedNodeIndex].x = event.x;
           newNodes[draggedNodeIndex].y = event.y;
-          setNodes(newNodes);
+          setNodes(newNodes); 
         }
       })
       .on('end', (event, d) => {
         select(event.sourceEvent.target).classed('active', false);
       });
 
-    // Apply drag behavior to circles
     svg.selectAll('circle').call(dragHandler);
+    svg.selectAll('circle').data(nodes);
   }, [nodes]);
 
   const handleNodeClick = (nodeId) => {
@@ -248,22 +240,16 @@ function EditKnowledgeGraph(){
           )}
         </div>
         <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}>
-        {links?.map((link, index) => {
-          const sourceNode = nodes.find((node) => node.id === link.source);
-          const targetNode = nodes.find((node) => node.id === link.target);
-
-          // Render the line only if both nodes exist
-          return sourceNode && targetNode ? (
-            <line
-              key={index}
-              x1={sourceNode.x}
-              y1={sourceNode.y}
-              x2={targetNode.x}
-              y2={targetNode.y}
-              stroke="black"
-            />
-          ) : null;
-        })}
+        {links.map((link, index) => (
+          <line
+            key={index}
+            x1={nodes.find((node) => node.id === link.source).x}
+            y1={nodes.find((node) => node.id === link.source).y}
+            x2={nodes.find((node) => node.id === link.target).x}
+            y2={nodes.find((node) => node.id === link.target).y}
+            stroke="black"
+          />
+        ))}
         {nodes.map((node) => (
           <g key={node.id}>
             <circle

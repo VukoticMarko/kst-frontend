@@ -35,6 +35,7 @@ function KnowledgeGraph(){
     updateDimensions();
 
     const svg = select(svgRef.current);
+    
     // Define drag behavior
     const dragHandler = drag()
       .subject((event, d) => ({ x: d.x, y: d.y }))
@@ -174,8 +175,9 @@ function KnowledgeGraph(){
   const handleBackButton = () => {
     navigate('/graphs')
   }
+  console.log('Nodes of the graph ', nodes)
+  console.log('Links in the graph ', links)
   let currentQT
-console.log(links)
   return (
     <div className="kg-wrapper">
       <div className="sidebarKG">
