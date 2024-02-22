@@ -38,8 +38,8 @@ const ChooseGraph = ({code}) => {
         const node2 = {
           id: uuidv4(),
           concept: 'css',
-            x: 275.00,
-            y: 420.00,
+            x: 275.0044,
+            y: 420.0022,
         } 
         const node3 = {
           id: uuidv4(),
@@ -56,7 +56,7 @@ const ChooseGraph = ({code}) => {
         let links = []
         let linkObj1 = {
           source: node.id,
-          taget: node2.id
+          target: node2.id
         }
         links.push(linkObj1)
 
