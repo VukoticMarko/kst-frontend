@@ -94,7 +94,7 @@ function EditKnowledgeGraph(){
     // Gather nodes in list
     const questionNodes = nodes.map(node => ({
       key: node.id,
-      concept: node.question,
+      concept: node.concept,
       x: node.x,
       y: node.y,
     }));

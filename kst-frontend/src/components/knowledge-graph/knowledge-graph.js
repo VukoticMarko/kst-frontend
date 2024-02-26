@@ -35,7 +35,7 @@ function KnowledgeGraph(){
     updateDimensions();
 
     const svg = select(svgRef.current);
-    
+
     // Define drag behavior
     const dragHandler = drag()
       .subject((event, d) => ({ x: d.x, y: d.y }))
@@ -86,7 +86,7 @@ function KnowledgeGraph(){
     // Gather nodes in list
     const questionNodes = nodes.map(node => ({
       key: node.id,
-      concept: node.question,
+      concept: node.concept,
       x: node.x,
       y: node.y,
     }));

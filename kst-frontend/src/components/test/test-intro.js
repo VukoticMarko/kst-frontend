@@ -17,7 +17,7 @@ function TestIntroduction() {
   return (
     <div id='intro-container'>
       <div>
-            <p id='intro-text'>Test duration is 1h 30min. Here we will test your knowledge
+            <p id='intro-text'>Test duration is 1h. Here we will test your knowledge
                 in basics of programming and dynamic variables. <br></br>
                 When you start this test you may not pause it nor exit it.
                 <br/> Exiting is same like turning in the empty paper. <br/>
