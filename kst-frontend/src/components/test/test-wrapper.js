@@ -13,6 +13,31 @@ function TestWrapper(){
     const {testId} = useParams()
     const accessToken = localStorage.getItem('accessToken')
     const [studentAnswers, setStudentAnswers] = useState([]) // For backend
+    const [remainingTime, setRemainingTime] = useState(3600);
+
+    useEffect(() => {
+      if (remainingTime <= 0) {
+          // Time's up, show message and submit answers
+          alert("Time's up!");
+          handleSubmitButton();
+          return;
+      }
+
+      // Set up the interval to tick down every second
+      const intervalId = setInterval(() => {
+          setRemainingTime(remainingTime - 1);
+      }, 1000);
+
+      // Clear the interval when component unmounts or when the timer reaches 0
+      return () => clearInterval(intervalId);
+    }, [remainingTime]);
+
+    const formatTime = (totalSeconds) => {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    };
 
     const handleAnswerSelection = (newAnswer) => {
 
@@ -27,6 +52,23 @@ function TestWrapper(){
     };
 
     const handleSubmitButton = () => {
+
+      // Handling unanswered questions
+      const completeAnswers = questions.map(question => {
+        // Check if the question has been answered
+        const existingAnswer = studentAnswers.find(answer => answer.question_id === question.id);
+        if (existingAnswer) {
+            return existingAnswer;
+        } else {
+            // Randomly select an answer for the question
+            const randomAnswerIndex = Math.floor(Math.random() * question.answers.length);
+            return {
+                question_id: question.id,
+                selectedAnswer: question.answers[randomAnswerIndex].id,
+            };
+        }
+      });
+
         let title = "temp"
         let test_id = parseInt(testId)
         const object = {
@@ -110,6 +152,9 @@ function TestWrapper(){
       return (
         <div>
             <HeaderWithoutLogo></HeaderWithoutLogo>
+            <div className='timer-container' style={{position: 'fixed', top: '10px', right: '10px', zIndex: 1000}}>
+                {formatTime(remainingTime)}
+            </div>
             <div className='test-container'>
                 {questions.map((question) => (
                 <TestOption 
