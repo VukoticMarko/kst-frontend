@@ -256,7 +256,7 @@ function KnowledgeGraph(){
             <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.concept}</text>
           </g>
         ))}
-      </svg>
+        </svg>
       </div>
     </div>
   );

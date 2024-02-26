@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import HiddenFormMenu from "../form-menu/hidden-form-menu";
 import './test-create.css';
+import { select } from 'd3';
 import * as d3 from 'd3';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {v4 as uuidv4} from 'uuid';
@@ -29,6 +30,7 @@ function TestCreate () {
   const navigate = useNavigate()  
   const [questionName, setQuestionName] = useState("");
   const [nodes, setNodes] = useState(graph.concepts);
+  const [links, setLinks] = useState(graph.links);
   const svgRef = useRef();
   const sidebarWidth = 200;
 
@@ -43,35 +45,6 @@ function TestCreate () {
   const [questions, setQuestions] = useState([]);
 
   // Graph logic
-
-  function getEdgePoint(sourceX, sourceY, targetX, targetY, nodeRadius) {
-    console.log(graph)
-    console.log('koordinate')
-    const numericSourceX = parseFloat(sourceX);
-  const numericSourceY = parseFloat(sourceY);
-  const numericTargetX = parseFloat(targetX);
-  const numericTargetY = parseFloat(targetY);
-
-  // Check for valid numeric values
-  if (isNaN(numericSourceX) || isNaN(numericSourceY) || isNaN(numericTargetX) || isNaN(numericTargetY)) {
-    console.error('Invalid numeric values for coordinates');
-    return { x: 0, y: 0 }; // Provide default values or handle the error accordingly
-  }
-
-   const dx = numericTargetX - numericSourceX;
-   const dy = numericTargetY - numericSourceY;
-   const angle = Math.atan2(dy, dx);
-   const x = numericSourceX + Math.cos(angle) * nodeRadius;
-   const y = numericSourceY + Math.sin(angle) * nodeRadius;
-   return { x, y };
-    // const dx = targetX - sourceX;
-    // const dy = targetY - sourceY;
-    // const angle = Math.atan2(dy, dx);
-    // const x = sourceX + Math.cos(angle) * nodeRadius;
-    // const y = sourceY + Math.sin(angle) * nodeRadius;
-    // console.log(x ,y)
-    // return { x, y };
-  }
 
   const handleConceptChange = (event) => {
     setSelectedConcept(event.target.value);
@@ -141,80 +114,41 @@ function TestCreate () {
 
   useEffect(() => {
 
-    const svg = d3.select(svgRef.current);
+    const container = document.querySelector('.graph-display-container-secondary');
+    if (container) {
+      const { width, height } = container.getBoundingClientRect();
+      setSvgDimensions({ width, height });
+    }
 
-    const updatedNodes = updateNodeLinks(nodes);
-
-    const linksData = updatedNodes.flatMap(node =>
-      (node.links || []).map(linkedNode => ({
-        source: node,
-        target: linkedNode
-      }))
-    );
-
-    const link = svg.selectAll(".link")
-      .data(linksData, d => `${d.source.id}-${d.target.id}`);
-    
-    link.enter()
-    .append("line")
-    .classed("link", true)
-    .attr("x1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).x)
-    .attr("y1", d => getEdgePoint(d.source.x, d.source.y, d.target.x, d.target.y, 15).y)
-    .attr("x2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).x)
-    .attr("y2", d => getEdgePoint(d.target.x, d.target.y, d.source.x, d.source.y, 15).y)
-    .attr("stroke", "black");
-
-    link.exit().remove();
-
-    const circles = svg.selectAll('circle')
-    .data(nodes, d => d.id);
-
-    circles.enter()
-        .append('circle')
-        .attr('r', 15)
-        .attr('cx', d => d.x ?? (100 + Math.random() * 100))
-        .attr('cy', d => d.y ?? 100)
-        .style('fill', 'green')
-        .style('stroke', 'black')
-        .style('stroke-width', 2)
-        .on('click', (event, d) => {
-          const nodeRadius = 15
-          event.stopPropagation(); 
-          setTooltipContent(d.question);
-          setTooltipPosition({
-              x: d.x,
-              y: d.y + nodeRadius + 5 
-          });
-          setTooltipVisible(true);
-      });
-
-    circles
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y);
-
-    circles.exit().remove();
-
-    svg.on('click', () => {
-      setTooltipVisible(false);
-    });
-
-  }, [nodes, tooltipVisible, tooltipContent, zoomTransform]); // Redraw graph when nodes change
-
-  useEffect(() => {
-    const updateDimensions = () => {
-        const width = window.innerWidth - sidebarWidth;
-        const height = window.innerHeight;
-        setSvgDimensions({ width, height });
+    const handleResize = () => {
     };
+    window.addEventListener('resize', handleResize);
 
-    window.addEventListener('resize', updateDimensions);
-    updateDimensions();
-
-    return () => {
-        window.removeEventListener('resize', updateDimensions);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Relative scaling of nodes to smaller rectangle
+  useEffect(() => {
+
+    if (nodes && nodes.length > 0 && svgDimensions.width && svgDimensions.height) {
+
+      const originalWidth = window.innerWidth - sidebarWidth;
+      const originalHeight = window.innerHeight
+      // Calculate scaling factors
+      const scaleX = svgDimensions.width / originalWidth;
+      const scaleY = svgDimensions.height / originalHeight;
   
+      // Scale node positions
+      const scaledNodes = nodes.map(node => ({
+        ...node,
+        x: node.x * scaleX,
+        y: node.y * scaleY
+      }));
+  
+      setNodes(scaledNodes);
+    }
+  }, [svgDimensions]); 
+
   const handleRemoveQuestion = (questionId) => {
     const updatedQuestions = questions.filter(question => question.id !== questionId);
     setQuestions(updatedQuestions);
@@ -443,51 +377,75 @@ function TestCreate () {
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
+
         <div className='test-container-tc'>
-        <div className="test-name-container">
-            {editingTestName ? (
-              <input
-                ref={inputRef}
-                type="text"
-                value={userTest}
-                onChange={handleTestNameChange}
-                onBlur={stopEditingTestName}
-                autoFocus
-              />
-            ) : (
-              <span onClick={startEditingTestName}>{userTest}</span>
-            )}
-          </div>
-        <QuestionMark message="When new questions are added to the test 
-         they will be displayed in this container. This is how the test will
-          look for the students." />
-                {questions.map((question) => (
-                <div className="question-container">
-                  <TestOption
-                  key={question.id} 
-                  qId={question.id}
-                  options={question.answers}
-                  text={question.question}
-                  onAnswerSelection={handleAnswerSelection}>
-                  </TestOption>
-                  <button className="remove-question-button" onClick={() => handleRemoveQuestion(question.id)}> x </button>
+            <div className="test-name-container">
+              {editingTestName ? (
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={userTest}
+                  onChange={handleTestNameChange}
+                  onBlur={stopEditingTestName}
+                  autoFocus
+                />
+              ) : (
+                <span onClick={startEditingTestName}>{userTest}</span>
+              )}
+            </div>
+          <QuestionMark message="When new questions are added to the test 
+          they will be displayed in this container. This is how the test will
+            look for the students." />
+                  {questions.map((question) => (
+                  <div className="question-container" style={{marginLeft: '165px'}}>
+                    <TestOption
+                    key={question.id} 
+                    qId={question.id}
+                    options={question.answers}
+                    text={question.question}
+                    onAnswerSelection={handleAnswerSelection}>
+                    </TestOption>
+                    <button className="remove-question-button" onClick={() => handleRemoveQuestion(question.id)}> x </button>
+                  </div>
+                  ))}
+              <div className="graph-display-container-secondary">
+                <div className="test-name-container">
+                  {graphName}
                 </div>
-                ))}
-        </div>
-        <div className="graph-display-container-main">
-          <div className="test-name-container">
-            {graphName}
-          </div>
-          <QuestionMark message="This is the chosen space theory graph. Concepts from
-           this graph are displayed in 'Select Concept' menu on the left sidebar.
-            When adding question, you have to choose concept from the graph." />
-          <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}></svg>
-        </div>
-        <Tooltip 
-            tooltipVisible={tooltipVisible}
-            tooltipContent={tooltipContent}
-            tooltipPosition={tooltipPosition}
-        />
+                <QuestionMark message="This is the chosen space theory graph. Concepts from
+                this graph are displayed in 'Select Concept' menu on the left sidebar.
+                  When adding question, you have to choose concept from the graph." />
+                 <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}>
+                    {links.map((link, index) => (
+                      <line
+                        key={index}
+                        x1={nodes.find((node) => node.id === link.source).x}
+                        y1={nodes.find((node) => node.id === link.source).y}
+                        x2={nodes.find((node) => node.id === link.target).x}
+                        y2={nodes.find((node) => node.id === link.target).y}
+                        stroke="black"
+                      />
+                    ))}
+                    {nodes.map((node) => (
+                      <g key={node.id}>
+                        <circle
+                          cx={node.x}
+                          cy={node.y}
+                          r={15}
+                          style={{ fill: 'green' }}
+                          ref={(el) => select(el).datum(node)}
+                        />
+                        <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.concept}</text>
+                      </g>
+                    ))}
+                  </svg>
+                </div>
+                <Tooltip 
+                    tooltipVisible={tooltipVisible}
+                    tooltipContent={tooltipContent}
+                    tooltipPosition={tooltipPosition}
+                />
+              </div>
      </div>
     );
   };

@@ -1,8 +1,11 @@
-.graph-display-container-main {
+.graph-display-container-secondary {
     border: 2px solid black;
-    margin-left: 200px;
-    max-width: calc(100% - 200px);
-    height: 100vh; 
+    position: absolute;
+    bottom:0;
+    right:0;
+    margin-left: 100px;
+    width: 450px;
+    height: 400px; 
   }
 
   .test-container-tc {
