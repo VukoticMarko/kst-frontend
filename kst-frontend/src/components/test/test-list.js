@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TestCard from './test-card'; 
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { greatest } from 'd3';
 
 function TestList(){
 
@@ -33,14 +34,20 @@ function TestList(){
   return (
     <div className="content" style={{marginTop: '30px'}}>
       {
+      userRole === 'Professor' && (
+          <h2 className='professor-test-h2'
+          style={{color: 'green'}}
+          >
+              You can create new tests or see EXPECTED KNOWLEDGE GRAPHS by pressing on existing tests.
+          </h2>
+      )}
+      {
         userRole === 'Professor' && (
-
-          <TestCard key={'creating-test-key'} id={'creating-test-key'} title={'Create New Tests'} 
-          time={''}
-          courseId={courseId}
-          description={'By pressing this card you can create new tests for students with help of knowledge graphs.'}
-          />
-
+            <TestCard key={'creating-test-key'} id={'creating-test-key'} title={'Create New Tests'} 
+            time={''}
+            courseId={courseId}
+            description={'By pressing this card you can create new tests for students with help of knowledge graphs.'}
+            />
       )}
       {tests.map((test) => (
         <TestCard key={test.id} id={test.id} title={test.title} time={test.createdAt} courseId={courseId} />
