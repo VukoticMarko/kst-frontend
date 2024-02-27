@@ -108,10 +108,6 @@ function TestCreate () {
   return nodes;
   };
 
-  const addQuestionState = (newQuestion) => {
-    setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
-  };
-
   useEffect(() => {
 
     const container = document.querySelector('.graph-display-container-secondary');
@@ -161,132 +157,64 @@ function TestCreate () {
   // Object adding logic
 
   const [createdObjectList, setCreatedObjectList] = useState([])
-  let currentQT, currentRA, currentW1, currentW2, currentW3
+  let currentQT, currentRA
 
   const addObjectToList = (object) => {
-      let fqt = 0, fra = 0, fw1 = 0, fw2 = 0, fw3 = 0
+    console.log('########ne ukas', object)
+      let fra = 0, fw1 = 0
       createdObjectList.forEach(addedObject => {
-        if(addedObject.type === 'questionText' && object.type === 'questionText'){
-          fqt = 1
-          currentQT = object.userInput
-          setQuestionName(currentQT)
-          addedObject.userInput = object.userInput
-        }
         if(addedObject.type === 'rightAnswer' && object.type === 'rightAnswer'){
           fra = 1
           currentRA = object.userInput
           addedObject.userInput = object.userInput
         }
-        if(addedObject.type === 'wrong1' && object.type === 'wrong1'){
+        if(addedObject.type === 'wrongAnswer' && object.type === 'wrongAnswer'){
           fw1 = 1
-          currentW1 = object.userInput
-          addedObject.userInput = object.userInput
-        }
-        if(addedObject.type === 'wrong2' && object.type === 'wrong2'){
-          fw2 = 1
-          currentW2 = object.userInput
-          addedObject.userInput = object.userInput
-        }
-        if(addedObject.type === 'wrong3' && object.type === 'wrong3'){
-          fw3 = 1
-          currentW3 = object.userInput
+          currentRA = object.userInput
           addedObject.userInput = object.userInput
         }
       });
-
-      if(fqt === 0 && object.type === 'questionText'){
-        currentQT = object.userInput
-        setQuestionName(currentQT)
-        createdObjectList.push(object)
-      }
       if(fra === 0 && object.type === 'rightAnswer'){
         currentRA = object.userInput
         createdObjectList.push(object)
       }
-      if(fw1 === 0 && object.type === 'wrong1'){
-        currentW1 = object.userInput
-        createdObjectList.push(object)
-      }
-      if(fw2 === 0 && object.type === 'wrong2'){
-        currentW2 = object.userInput
-        createdObjectList.push(object)
-      }
-      if(fw3 === 0 && object.type === 'wrong3'){
-        currentW3 = object.userInput
+      if(fw1 === 0 && object.type === 'wrongAnswer'){
+        currentRA = object.userInput
         createdObjectList.push(object)
       }
       console.log('Lista je:', createdObjectList)
   }
 
   const handleAnswerSelection = () => {};
-  const removeExtraWrongs = () => {
-      const filteredList = createdObjectList.filter(
-        addedObject => addedObject.type !== 'wrong2' && addedObject.type !== 'wrong3'
-      );
-      setCreatedObjectList(filteredList);
-      setSelectedFalse(1)
-  }
+
   console.log('graph', graph)
+
   // Question and Test Handling
   const postQuestion = async () => {
-
-    if(selectedConcept === ''){
-      alert('You must select concept!')
-      return;
-    }
-    const answers = []
-    const newQuestion = {
-      question: '',
-      id: uuidv4(),
-      answers: [],
-      nodeId: 0
-    }
-
-    for (let i = 0; i < graph.concepts.length; i++) {
-      const currentItem = graph.concepts[i]
-      if(selectedConcept === currentItem.concept){
-        newQuestion.nodeId = parseInt(currentItem.key);
-      }
-    }
-
     for (let i = 0; i < createdObjectList.length; i++) {
       const currentItem = createdObjectList[i];
-      if(currentItem.type === 'questionText'){
-        let question = currentItem.userInput
-        newQuestion.question = question;
-      }
       if(currentItem.type === 'rightAnswer'){
         let rightAnswer = {
           text: currentItem.userInput,
           correct: true,
         }  
-        newQuestion.answers.push(rightAnswer)
+        currentQuestion.answers.push(rightAnswer)
       }
-      if(currentItem.type === 'wrong1'){
+      if(currentItem.type === 'wrongAnswer'){
         let wrong1 = {
           text: currentItem.userInput,
           correct: false,
         } 
-        newQuestion.answers.push(wrong1)
-      }
-      if(currentItem.type === 'wrong2'){
-        let wrong2 = {
-          text: currentItem.userInput,
-          correct: false,
-        } 
-        newQuestion.answers.push(wrong2) 
-      }
-      if(currentItem.type === 'wrong3'){
-        let wrong3 = {
-          text: currentItem.userInput,
-          correct: false,
-        } 
-        newQuestion.answers.push(wrong3) 
+        currentQuestion.answers.push(wrong1)
       }
       
     }
 
-    setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
+    setQuestions(prevQuestions =>
+      prevQuestions.map(question =>
+        question.id === currentQuestion.id ? { ...question, ...currentQuestion } : question
+      )
+    );
     
     };
 
@@ -313,19 +241,81 @@ function TestCreate () {
         console.log(response.data);
         navigate('/courses')
       } catch (error) {
-        console.error('There was an error sending the graph data:', error);
+        console.error('There was an error sending the test data:', error);
       }
     };
+
+    const [currentQuestion, setCurrentQuestion] = useState({});
+    const addQuestion = (object) => {
+
+      if(selectedConcept === ''){
+        alert('You must select concept before adding question!')
+        return;
+      }
+
+      let fqt = 0
+      // If it exists; update
+      createdObjectList.forEach(addedObject => {
+        if(addedObject.type === 'questionText' && object.type === 'questionText'){
+          fqt = 1
+          currentQT = object.userInput
+          setQuestionName(currentQT)
+          addedObject.userInput = object.userInput
+        }
+      })
+      // Doesn't exist, create new
+      if(fqt === 0 && object.type === 'questionText'){
+        currentQT = object.userInput
+        setQuestionName(currentQT)
+        createdObjectList.push(object)
+      }
+      console.log('Lista je:', createdObjectList)
+
+      const newQuestion = {
+        question: currentQT,
+        id: uuidv4(),
+        answers: [],
+        nodeId: 0
+      }
+
+      // Getting node ID
+      for (let i = 0; i < graph.concepts.length; i++) {
+        const currentItem = graph.concepts[i]
+        if(selectedConcept === currentItem.concept){
+          newQuestion.nodeId = parseInt(currentItem.key);
+        }
+      }
+
+      // Setting question name
+      for (let i = 0; i < createdObjectList.length; i++) {
+        const currentItem = createdObjectList[i];
+        if(currentItem.type === 'questionText'){
+          let question = currentItem.userInput
+          newQuestion.question = question;
+        }
+      }
+      setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
+      setCurrentQuestion(newQuestion);
+    }
+
+    let [typeAnswer, updateTypeAnswer] = useState('rightAnswer')
+    useEffect(() => {
+      console.log('Type of answer selected: ', typeAnswer);
+    }, [typeAnswer]);
+
+    const setAnswer = (answerType) => {
+      updateTypeAnswer(answerType);
+    }
 
     return (
      <div className="page">
         <div className="sidebarKG">
           <h3 style={{color: 'white'}}>Test Creator</h3>
           <HiddenFormMenu title={"Add new Question:"} btnName={"New Question"} 
-            typeForm={'questionText'} addObjectToList={addObjectToList}
+            typeForm={'questionText'} addQuestion={addQuestion}
             currentState={currentQT}/>
-          <HiddenFormMenu title={"Add RIGHT answer:"} btnName={"Right Answer"}
-           typeForm={'rightAnswer'} addObjectToList={addObjectToList}
+          <HiddenFormMenu title={"Add answer:"} btnName={"Add Answer"}
+           typeForm={typeAnswer} addObjectToList={addObjectToList}
            currentState={currentRA}/>
           <div className="concept-select">
             <select value={selectedConcept} onChange={handleConceptChange}>
@@ -336,45 +326,28 @@ function TestCreate () {
                     </option>
                 ))}
             </select>
-        </div>
-          <div className='rb'>
-              <h4 style={{color: 'white'}}>Select number of false answers:</h4>
-              <input type='radio'
-              onChange={removeExtraWrongs} value={1}
-              name='falseAnswers'
-              />
-              <input type='radio'
-              onChange={() => setSelectedFalse(3)} value={3}
-              name='falseAnswers'
-              />
           </div>
-          {
-            selectedFalse === 1 && (
-              <div>
-                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"} 
-                typeForm={'wrong1'} addObjectToList={addObjectToList}
-                currentState={currentW1}/>
-              </div>
-            )
-          }
-           {
-            selectedFalse === 3 && (
-              <div>
-                <HiddenFormMenu title={"Add FALSE answer 1:"} btnName={"Wrong Answer 1"} 
-                typeForm={'wrong1'} addObjectToList={addObjectToList}
-                currentState={currentW1}/>
-                <HiddenFormMenu title={"Add FALSE answer 2:"} btnName={"Wrong Answer 2"} 
-                typeForm={'wrong2'} addObjectToList={addObjectToList}
-                currentState={currentW2}/>
-                <HiddenFormMenu title={"Add FALSE answer 3:"} btnName={"Wrong Answer 3"} 
-                typeForm={'wrong3'} addObjectToList={addObjectToList}
-                currentState={currentW3}/>
-              </div>
-            )
-          }
-          <button className='finish-button' onClick={postQuestion}>Add Question</button>
-          <button className='finish-test-button' onClick={postTest}>Finish Test</button>
+          <div className='rb'>
+              <h4 style={{color: 'white'}}>Select type of answer:</h4>
+              <label style={{color: 'white', marginRight: '10px'}}>
+                  <input type='radio'
+                        onChange={() => setAnswer('rightAnswer')}
+                        name='answer'
+                  />
+                  True
+              </label>
+              <label style={{color: 'white'}}>
+                  <input type='radio'
+                        onChange={() => setAnswer('wrongAnswer')}
+                        name='answer'
+                  />
+                  False
+              </label>
+          </div>
+          <button className='finish-button' onClick={postQuestion}>Add Answer</button>
+          <button className='finish-button' onClick={postQuestion}>Finish Question</button>
           <br></br>
+          <button className='finish-test-button' onClick={postTest}>Finish Test</button>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
 

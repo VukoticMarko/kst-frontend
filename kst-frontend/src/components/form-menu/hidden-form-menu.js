@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './hidden-form-menu.css'
 
-const HiddenFormMenu = ( {btnName, title, typeForm, addObjectToList, currentState} ) => {
+const HiddenFormMenu = ( {btnName, title, typeForm, addQuestion, addObjectToList, currentState} ) => {
 
   const [formVisible, setFormVisible] = useState(false);
   const [userInput, setUserInput] = useState('')
@@ -44,7 +44,10 @@ const HiddenFormMenu = ( {btnName, title, typeForm, addObjectToList, currentStat
       object.userInput = userInput
     }
 
-    addObjectToList(object)
+    if(typeForm != 'questionText') {addObjectToList(object)} 
+    else {
+      addQuestion(object)
+    }
     toggleFormVisibility();
   }
 
