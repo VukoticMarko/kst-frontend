@@ -77,37 +77,6 @@ function TestCreate () {
     };
   }, []);
 
-  const updateNodeLinks = (nodes) => {
-    
-  console.log('nodovi', nodes)
-  // Clear previous links
-  nodes.forEach(node => {
-    node.links = [];
-  });
-
-  // Create a map for quick access to nodes by questionLevel
-  const nodesByLevel = nodes.reduce((acc, node) => {
-    if (!acc[node.questionLevel]) {
-      acc[node.questionLevel] = [];
-    }
-    acc[node.questionLevel].push(node);
-    return acc;
-  }, {});
-
-  // Connect nodes to the next questionLevel
-  nodes.forEach(node => {
-    const nextLevelNodes = nodesByLevel[node.questionLevel + 1];
-    if (nextLevelNodes && Array.isArray(nextLevelNodes)) {
-      nextLevelNodes.forEach(nxNode => {
-        node.links.push(nxNode);
-      });
-      setNodes(nodes)
-    }
-  });
-
-  return nodes;
-  };
-
   useEffect(() => {
 
     const container = document.querySelector('.graph-display-container-secondary');
@@ -159,8 +128,12 @@ function TestCreate () {
   const [createdObjectList, setCreatedObjectList] = useState([])
   let currentQT, currentRA
 
+  // TODO: Bug when adding multiple choices, it multiplies from list
   const addObjectToList = (object) => {
-    console.log('########ne ukas', object)
+    if (typeAnswer !== 'rightAnswer' && typeAnswer !== 'wrongAnswer') {
+      alert('Please select an answer type.');
+      return;
+    } else {
       let fra = 0, fw1 = 0
       createdObjectList.forEach(addedObject => {
         if(addedObject.type === 'rightAnswer' && object.type === 'rightAnswer'){
@@ -183,14 +156,14 @@ function TestCreate () {
         createdObjectList.push(object)
       }
       console.log('Lista je:', createdObjectList)
+    }
   }
 
   const handleAnswerSelection = () => {};
 
-  console.log('graph', graph)
-
   // Question and Test Handling
   const postQuestion = async () => {
+
     for (let i = 0; i < createdObjectList.length; i++) {
       const currentItem = createdObjectList[i];
       if(currentItem.type === 'rightAnswer'){
@@ -207,7 +180,6 @@ function TestCreate () {
         } 
         currentQuestion.answers.push(wrong1)
       }
-      
     }
 
     setQuestions(prevQuestions =>
@@ -215,6 +187,7 @@ function TestCreate () {
         question.id === currentQuestion.id ? { ...question, ...currentQuestion } : question
       )
     );
+    updateTypeAnswer('')
     
     };
 
@@ -298,7 +271,7 @@ function TestCreate () {
       setCurrentQuestion(newQuestion);
     }
 
-    let [typeAnswer, updateTypeAnswer] = useState('rightAnswer')
+    let [typeAnswer, updateTypeAnswer] = useState('')
     useEffect(() => {
       console.log('Type of answer selected: ', typeAnswer);
     }, [typeAnswer]);
@@ -328,21 +301,23 @@ function TestCreate () {
             </select>
           </div>
           <div className='rb'>
-              <h4 style={{color: 'white'}}>Select type of answer:</h4>
-              <label style={{color: 'white', marginRight: '10px'}}>
-                  <input type='radio'
-                        onChange={() => setAnswer('rightAnswer')}
-                        name='answer'
-                  />
-                  True
-              </label>
-              <label style={{color: 'white'}}>
-                  <input type='radio'
-                        onChange={() => setAnswer('wrongAnswer')}
-                        name='answer'
-                  />
-                  False
-              </label>
+            <h4 style={{color: 'white'}}>Select type of answer:</h4>
+            <label style={{color: 'white', marginRight: '10px'}}>
+              <input type='radio'
+                    onChange={() => setAnswer('rightAnswer')}
+                    name='answerType'
+                    checked={typeAnswer === 'rightAnswer'}
+              />
+              True
+            </label>
+            <label style={{color: 'white'}}>
+              <input type='radio'
+                    checked={typeAnswer === 'wrongAnswer'}
+                    onChange={() => setAnswer('wrongAnswer')}
+                    name='answerType'
+              />
+              False
+            </label>
           </div>
           <button className='finish-button' onClick={postQuestion}>Add Answer</button>
           <button className='finish-button' onClick={postQuestion}>Finish Question</button>

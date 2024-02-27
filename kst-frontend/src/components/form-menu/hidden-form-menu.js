@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './hidden-form-menu.css'
 
-const HiddenFormMenu = ( {btnName, title, typeForm, addQuestion, addObjectToList, currentState} ) => {
+const HiddenFormMenu = ( {btnName, title, typeForm, addQuestion, addObjectToList, currentState } ) => {
 
   const [formVisible, setFormVisible] = useState(false);
   const [userInput, setUserInput] = useState('')
@@ -22,7 +22,7 @@ const HiddenFormMenu = ( {btnName, title, typeForm, addQuestion, addObjectToList
       userInput: ''
     }
 
-    // TYPES: wrong1,2,3 | rightAnswer| questionText, questionLevel
+    // TYPES: wrongAnswer | rightAnswer | questionText
     if(typeForm === 'questionText'){
       object.type = 'questionText'
       object.userInput = userInput
@@ -31,16 +31,8 @@ const HiddenFormMenu = ( {btnName, title, typeForm, addQuestion, addObjectToList
       object.type = 'rightAnswer'
       object.userInput = userInput
     }
-    if(typeForm === 'wrong1'){
-      object.type = 'wrong1'
-      object.userInput = userInput
-    }
-    if(typeForm === 'wrong2'){
-      object.type = 'wrong2'
-      object.userInput = userInput
-    }
-    if(typeForm === 'wrong3'){
-      object.type = 'wrong3'
+    if(typeForm === 'wrongAnswer'){
+      object.type = 'wrongAnswer'
       object.userInput = userInput
     }
 
@@ -62,7 +54,6 @@ const HiddenFormMenu = ( {btnName, title, typeForm, addQuestion, addObjectToList
             <label>
               {title}
               <input onChange={(e) => setUserInput(e.target.value)}
-              value={userInput !== undefined ? userInput : currentState}
               placeholder={currentState} type="text"/> 
             </label>
             <button 
