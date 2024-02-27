@@ -13,27 +13,42 @@ function ExpcetedKnowledgeGraph(){
     console.log(`Details for studentWorkId ${studentWorkId}`);
   };
 
+  function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return ` ${hours}:${minutes} ${day}/${month}/${year}`;
+  }
+
   useEffect(() => {
 
-    let list = []
-    const temporaryTest = {
-      id: 3213412,
-      title: 'JS Test',
-      startTime: "2024-02-27 19:09:51.411798",
-      endTime: "2024-02-27 19:09:51.411798",
-      studentId: 3,
-      testId: 7
-    }
-    const temporaryTest2 = {
-      id: 3213412321,
-      title: 'JS Test',
-      startTime: "2024-02-27 19:09:51.411798",
-      endTime: "2024-02-27 19:09:51.411798",
-      studentId: 4,
-      testId: 7
-    }
-    list.push(temporaryTest, temporaryTest2)
-    setStudentWork(list)
+    const list = [
+      {
+        id: 3213412,
+        title: 'JS Test',
+        startTime: "2024-02-27T19:09:51.411798Z",
+        endTime: "2024-02-27T19:09:51.411798Z",
+        studentId: 3,
+        testId: 7
+      },
+      {
+        id: 3213412321,
+        title: 'JS Test',
+        startTime: "2024-02-27T19:09:51.411798Z",
+        endTime: "2024-02-27T19:09:51.411798Z",
+        studentId: 4,
+        testId: 7
+      }
+    ].map((object) => ({
+      ...object,
+      startTime: formatTimestamp(object.startTime),
+      endTime: formatTimestamp(object.endTime),
+    }));
+  
+    setStudentWork(list);
     
   }, [])
    
