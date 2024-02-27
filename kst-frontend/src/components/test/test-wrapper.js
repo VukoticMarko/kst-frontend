@@ -14,6 +14,7 @@ function TestWrapper(){
     const accessToken = localStorage.getItem('accessToken')
     const [studentAnswers, setStudentAnswers] = useState([]) // For backend
     const [remainingTime, setRemainingTime] = useState(3600);
+    const [testTitle, setTestTitle] = useState('temp')
 
     useEffect(() => {
       if (remainingTime <= 0) {
@@ -69,10 +70,9 @@ function TestWrapper(){
         }
       });
 
-        let title = "temp"
         let test_id = parseInt(testId)
         const object = {
-            'title': title,
+            'title': testTitle,
             'test_id': test_id,
             'studentAnswers': studentAnswers
         }
@@ -137,6 +137,7 @@ function TestWrapper(){
               });
               const data = response.data;
               const questions = data.questions
+              setTestTitle(data.title)
               const questionArray = Array.isArray(data) ? data : questions || [];
               let shuffledArray = shuffleArray(questionArray)
               console.log(shuffledArray)

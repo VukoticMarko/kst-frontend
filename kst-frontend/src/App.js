@@ -75,9 +75,7 @@ function App() {
           <div>
             <Header><LogoutButton/></Header> 
             <Sidebar />
-            <div className="content">
-              <ExpcetedKnowledgeGraph/>
-            </div>
+            <div className='content'><ExpcetedKnowledgeGraph/></div>   
           </div>  
           }
         />
