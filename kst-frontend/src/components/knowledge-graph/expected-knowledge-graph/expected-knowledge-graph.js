@@ -40,6 +40,7 @@ function ExpcetedKnowledgeGraph(){
   return (
     <div>
       <div className="table-container">
+      <h2 className='table-text'>Here you can see test results and generate EXPECTED KNOWLEDGE GRAPH.</h2>
         <table>
         <thead>
           <tr>
@@ -69,6 +70,7 @@ function ExpcetedKnowledgeGraph(){
             </tr>
           ))}
         </tbody>
+        <button className='e-kg-button'>Generate E. Knowledge Graph</button>
         </table>
       </div>
     </div>

@@ -5,6 +5,32 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
 
+.table-text{
+    color: #333;
+    font-size: 16px;
+    font-weight: normal;
+    text-align: left;
+    margin-left: 85px;
+    margin-bottom: 20px;
+}
+
+.e-kg-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 200px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
   table {
     width: 100%;
     border-collapse: collapse;
