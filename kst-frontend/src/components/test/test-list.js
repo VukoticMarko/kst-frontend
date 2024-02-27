@@ -38,7 +38,7 @@ function TestList(){
           <h2 className='professor-test-h2'
           style={{color: 'green'}}
           >
-              You can create new tests or see EXPECTED KNOWLEDGE GRAPHS by pressing on existing tests.
+              You can create new tests or see student answers by pressing on existing tests.
           </h2>
       )}
       {
