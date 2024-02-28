@@ -117,6 +117,10 @@ function TestCreate () {
   const handleRemoveQuestion = (questionId) => {
     const updatedQuestions = questions.filter(question => question.id !== questionId);
     setQuestions(updatedQuestions);
+    const clearCreatedObjectList = () => { // Remove all answers from question
+      setCreatedObjectList([]); // Potential hazard - needs testing
+    };
+    clearCreatedObjectList();
   };
 
   const handleBackButton = () => {
@@ -130,35 +134,29 @@ function TestCreate () {
 
   // TODO: Bug when adding multiple choices, it multiplies from list
   const addObjectToList = (object) => {
+    console.log('addObjectToList called with:', object);
     if (typeAnswer !== 'rightAnswer' && typeAnswer !== 'wrongAnswer') {
       alert('Please select an answer type.');
       return;
     } else {
-      let fra = 0, fw1 = 0
-      createdObjectList.forEach(addedObject => {
-        if(addedObject.type === 'rightAnswer' && object.type === 'rightAnswer'){
-          fra = 1
-          currentRA = object.userInput
-          addedObject.userInput = object.userInput
-        }
-        if(addedObject.type === 'wrongAnswer' && object.type === 'wrongAnswer'){
-          fw1 = 1
-          currentRA = object.userInput
-          addedObject.userInput = object.userInput
-        }
-      });
-      if(fra === 0 && object.type === 'rightAnswer'){
-        currentRA = object.userInput
-        createdObjectList.push(object)
-      }
-      if(fw1 === 0 && object.type === 'wrongAnswer'){
-        currentRA = object.userInput
-        createdObjectList.push(object)
+      const isDuplicate = createdObjectList.some(addedObject =>
+        addedObject.type === object.type && addedObject.userInput === object.userInput
+      );
+      if (!isDuplicate) {
+        // Update the list with the new answer
+        console.log('Adding new object:', object);
+        console.log('Old Created objlist:', createdObjectList)
+        setCreatedObjectList(prevList => [...prevList, object]);
+        console.log('New Created objlist:', createdObjectList)
+      } else {
+        alert('This answer has already been added.');
       }
       console.log('Lista je:', createdObjectList)
     }
   }
-
+  useEffect(() => {
+    console.log('TRUE Updated Created objlist:', createdObjectList);
+  }, [createdObjectList]);
   const handleAnswerSelection = () => {};
 
   // Question and Test Handling
