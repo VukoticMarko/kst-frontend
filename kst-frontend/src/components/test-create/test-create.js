@@ -132,66 +132,51 @@ function TestCreate () {
   const [createdObjectList, setCreatedObjectList] = useState([])
   let currentQT, currentRA
 
-  // TODO: Bug when adding multiple choices, it multiplies from list
+  // Question and Test Handling
   const addObjectToList = (object) => {
-    console.log('addObjectToList called with:', object);
+
+    const hasQuestionText = createdObjectList.some(object => object.type === 'questionText');
+    if (hasQuestionText) {
+    } else {
+      alert('Create new question first before adding new answers!');
+      return;
+    }
+
     if (typeAnswer !== 'rightAnswer' && typeAnswer !== 'wrongAnswer') {
       alert('Please select an answer type.');
       return;
     } else {
       const isDuplicate = createdObjectList.some(addedObject =>
         addedObject.type === object.type && addedObject.userInput === object.userInput
+        ||
+        addedObject.userInput === object.userInput
       );
       if (!isDuplicate) {
         // Update the list with the new answer
-        console.log('Adding new object:', object);
-        console.log('Old Created objlist:', createdObjectList)
         setCreatedObjectList(prevList => [...prevList, object]);
-        console.log('New Created objlist:', createdObjectList)
+        if(typeAnswer === 'rightAnswer'){
+          let rightAnswer = {
+            text: object.userInput,
+            correct: true,
+          }  
+          currentQuestion.answers.push(rightAnswer)
+        } else {
+          let wrongAnswer = {
+            text: object.userInput,
+            correct: false,
+          }  
+          currentQuestion.answers.push(wrongAnswer)
+        }
       } else {
-        alert('This answer has already been added.');
+        alert('Answer field cannote be empty or it has already been added.');
       }
       console.log('Lista je:', createdObjectList)
     }
   }
-  useEffect(() => {
-    console.log('TRUE Updated Created objlist:', createdObjectList);
-  }, [createdObjectList]);
+
   const handleAnswerSelection = () => {};
 
-  // Question and Test Handling
-  const postQuestion = async () => {
-
-    for (let i = 0; i < createdObjectList.length; i++) {
-      const currentItem = createdObjectList[i];
-      if(currentItem.type === 'rightAnswer'){
-        let rightAnswer = {
-          text: currentItem.userInput,
-          correct: true,
-        }  
-        currentQuestion.answers.push(rightAnswer)
-      }
-      if(currentItem.type === 'wrongAnswer'){
-        let wrong1 = {
-          text: currentItem.userInput,
-          correct: false,
-        } 
-        currentQuestion.answers.push(wrong1)
-      }
-    }
-
-    setQuestions(prevQuestions =>
-      prevQuestions.map(question =>
-        question.id === currentQuestion.id ? { ...question, ...currentQuestion } : question
-      )
-    );
-    updateTypeAnswer('')
-    
-    };
-
-    console.log("questions", questions)
-
-    const postTest = async () => {
+  const postTest = async () => {
 
       const testObject = {
         testName: userTest,
@@ -199,6 +184,7 @@ function TestCreate () {
         questions: questions,
         knowledgeSpaceId: graph.id
       }
+
       console.log('Postuje se:', testObject)
       try {
         const response = await axios.post('http://localhost:3000/tests',
@@ -216,31 +202,28 @@ function TestCreate () {
       }
     };
 
+    console.log('Added Questions:', questions)
+
+    // Adding questions
     const [currentQuestion, setCurrentQuestion] = useState({});
     const addQuestion = (object) => {
 
+      const hasQuestionText = createdObjectList.some(object => object.type === 'questionText');
+      if (hasQuestionText) {
+        alert('Cannot add new question before you finish previous question!');
+        return;
+      }
+      
       if(selectedConcept === ''){
         alert('You must select concept before adding question!')
         return;
       }
 
-      let fqt = 0
-      // If it exists; update
-      createdObjectList.forEach(addedObject => {
-        if(addedObject.type === 'questionText' && object.type === 'questionText'){
-          fqt = 1
-          currentQT = object.userInput
-          setQuestionName(currentQT)
-          addedObject.userInput = object.userInput
-        }
-      })
-      // Doesn't exist, create new
-      if(fqt === 0 && object.type === 'questionText'){
-        currentQT = object.userInput
-        setQuestionName(currentQT)
-        createdObjectList.push(object)
-      }
-      console.log('Lista je:', createdObjectList)
+      // Create new
+      currentQT = object.userInput
+      setQuestionName(currentQT)
+      createdObjectList.push(object)
+      //console.log('Lista je:', createdObjectList)
 
       const newQuestion = {
         question: currentQT,
@@ -253,7 +236,7 @@ function TestCreate () {
       for (let i = 0; i < graph.concepts.length; i++) {
         const currentItem = graph.concepts[i]
         if(selectedConcept === currentItem.concept){
-          newQuestion.nodeId = parseInt(currentItem.key);
+          newQuestion.nodeId = currentItem.id;
         }
       }
 
@@ -278,16 +261,14 @@ function TestCreate () {
       updateTypeAnswer(answerType);
     }
 
+    const handleFinishQuestion = () => {
+      setCreatedObjectList([])
+    }
+
     return (
      <div className="page">
         <div className="sidebarKG">
           <h3 style={{color: 'white'}}>Test Creator</h3>
-          <HiddenFormMenu title={"Add new Question:"} btnName={"New Question"} 
-            typeForm={'questionText'} addQuestion={addQuestion}
-            currentState={currentQT}/>
-          <HiddenFormMenu title={"Add answer:"} btnName={"Add Answer"}
-           typeForm={typeAnswer} addObjectToList={addObjectToList}
-           currentState={currentRA}/>
           <div className="concept-select">
             <select value={selectedConcept} onChange={handleConceptChange}>
                 <option value="" disabled>Select Concept</option>
@@ -297,6 +278,14 @@ function TestCreate () {
                     </option>
                 ))}
             </select>
+          </div>
+          <div className="hfm-container">
+            <HiddenFormMenu title={"Add new Question:"} btnName={"New Question"} 
+              typeForm={'questionText'} addQuestion={addQuestion}
+              currentState={currentQT}/>
+            <HiddenFormMenu title={"Add answer:"} btnName={"Add Answer"}
+            typeForm={typeAnswer} addObjectToList={addObjectToList}
+            currentState={currentRA}/>
           </div>
           <div className='rb'>
             <h4 style={{color: 'white'}}>Select type of answer:</h4>
@@ -317,10 +306,9 @@ function TestCreate () {
               False
             </label>
           </div>
-          <button className='finish-button' onClick={postQuestion}>Add Answer</button>
-          <button className='finish-button' onClick={postQuestion}>Finish Question</button>
-          <br></br>
+          <button className='finish-button' onClick={handleFinishQuestion}>Finish Question</button>
           <button className='finish-test-button' onClick={postTest}>Finish Test</button>
+          <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
         </div>
 
