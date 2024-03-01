@@ -366,7 +366,7 @@ function TestCreate () {
                           cx={node.x}
                           cy={node.y}
                           r={15}
-                          style={{ fill: 'green' }}
+                          style={{ fill: selectedConcept === node.concept ? 'red' : 'green' }}
                           ref={(el) => select(el).datum(node)}
                         />
                         <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.concept}</text>
