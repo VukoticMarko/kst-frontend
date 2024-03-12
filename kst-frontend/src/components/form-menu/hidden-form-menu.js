@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './hidden-form-menu.css'
+import { type } from '@testing-library/user-event/dist/type';
 
 const HiddenFormMenu = ( {btnName, title, typeForm, addQuestion, addObjectToList, currentState } ) => {
 
@@ -22,7 +23,7 @@ const HiddenFormMenu = ( {btnName, title, typeForm, addQuestion, addObjectToList
       userInput: ''
     }
 
-    // TYPES: wrongAnswer | rightAnswer | questionText
+    // TYPES: wrongAnswer | rightAnswer | questionText | conceptText
     if(typeForm === 'questionText'){
       object.type = 'questionText'
       object.userInput = userInput
@@ -35,9 +36,16 @@ const HiddenFormMenu = ( {btnName, title, typeForm, addQuestion, addObjectToList
       object.type = 'wrongAnswer'
       object.userInput = userInput
     }
+    if(typeForm === 'conceptText'){
+      object.type = 'conceptText'
+      object.userInput = userInput
+    }
 
     if(typeForm != 'questionText') {addObjectToList(object)} 
     else {
+      if(typeForm === 'conceptText'){
+        addObjectToList(object)
+      }
       addQuestion(object)
     }
     toggleFormVisibility();

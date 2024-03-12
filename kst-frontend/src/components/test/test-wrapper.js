@@ -108,13 +108,13 @@ function TestWrapper(){
         postData();
     };
 
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-      }      
+    // function shuffleArray(array) {
+    //     for (let i = array.length - 1; i > 0; i--) {
+    //       const j = Math.floor(Math.random() * (i + 1));
+    //       [array[i], array[j]] = [array[j], array[i]];
+    //     }
+    //     return array;
+    //   }      
 
     function shuffleArrayAnswers(array) {
         array.forEach(question => {
@@ -139,10 +139,10 @@ function TestWrapper(){
               const questions = data.questions
               setTestTitle(data.title)
               const questionArray = Array.isArray(data) ? data : questions || [];
-              let shuffledArray = shuffleArray(questionArray)
-              console.log(shuffledArray)
-              shuffleArrayAnswers(shuffledArray)
-              setQuestions(shuffledArray);
+              //let shuffledArray = shuffleArray(questionArray)
+              //console.log(shuffledArray)
+              shuffleArrayAnswers(questionArray)
+              setQuestions(questionArray);
             } catch (error) {
               console.error('Error fetching data:', error);
             }

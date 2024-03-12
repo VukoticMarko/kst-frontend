@@ -1,16 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './expected-knowledge-graph.css'
 import exSpaceIMG from './exspimg.png'
+import axios from 'axios';
 
 function ExpcetedKnowledgeGraph(){
 
   const navigate = useNavigate()
   const accessToken = localStorage.getItem('accessToken')
   const [studentWork, setStudentWork] = useState([])
+  const {courseId, testId} = useParams()
 
-  const handleDetailsClick = (studentWorkId) => {
-    console.log(`Details for studentWorkId ${studentWorkId}`);
+  const handleDetailsClick = () => {
+    
+  };
+
+  const generateExpectedKnowledgeGraph = async () => {
+    try {
+      const response = await axios.post(`http://localhost:3000/student-tests/iita/${testId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      const data = response.data;
+      console.log(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   function formatTimestamp(timestamp) {
@@ -25,30 +43,22 @@ function ExpcetedKnowledgeGraph(){
 
   useEffect(() => {
 
-    const list = [
-      {
-        id: 3213412,
-        title: 'JS Test',
-        startTime: "2024-02-27T19:09:51.411798Z",
-        endTime: "2024-02-27T19:09:51.411798Z",
-        studentId: 3,
-        testId: 7
-      },
-      {
-        id: 3213412321,
-        title: 'JS Test',
-        startTime: "2024-02-27T19:09:51.411798Z",
-        endTime: "2024-02-27T19:09:51.411798Z",
-        studentId: 4,
-        testId: 7
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/student-tests', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = response.data;
+        setStudentWork(data)
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    ].map((object) => ({
-      ...object,
-      startTime: formatTimestamp(object.startTime),
-      endTime: formatTimestamp(object.endTime),
-    }));
-  
-    setStudentWork(list);
+    };
+    fetchData();
     
   }, [])
    
@@ -59,24 +69,25 @@ function ExpcetedKnowledgeGraph(){
         <table>
         <thead>
           <tr>
-            <th>Test ID</th>
-            <th>Title</th>
+            <th>Test Name</th>
             <th>Start Time</th>
             <th>End Time</th>
-            <th>Student ID</th>
-            <th>Test ID</th>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Points</th>
             <th>Actions</th>
+            
           </tr>
         </thead>
         <tbody>
           {studentWork.map((work) => (
             <tr key={work.id}>
-              <td>{work.id}</td>
               <td>{work.title}</td>
-              <td>{work.startTime}</td>
-              <td>{work.endTime}</td>
-              <td>{work.studentId}</td>
-              <td>{work.testId}</td>
+              <td>{formatTimestamp(work.startTime)}</td>
+              <td>{formatTimestamp(work.endTime)}</td>
+              <td>{work.student.firstname}</td>
+              <td>{work.student.lastname}</td>
+              <td></td>
               <td>
                 <button className='detail-button' onClick={() => handleDetailsClick(work.id)}>
                   Details
@@ -85,7 +96,7 @@ function ExpcetedKnowledgeGraph(){
             </tr>
           ))}
         </tbody>
-        <button className='e-kg-button'>Generate E. Knowledge Graph</button>
+        <button className='e-kg-button' onClick={() => generateExpectedKnowledgeGraph()}>Generate E. Knowledge Graph</button>
         </table>
       </div>
     </div>

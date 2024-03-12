@@ -93,12 +93,14 @@ function EditKnowledgeGraph(){
 
     // Gather nodes in list
     const questionNodes = nodes.map(node => ({
-      key: node.id,
+      id: node.id,
+      key: node.key,
       concept: node.concept,
       x: node.x,
       y: node.y,
     }));
     const editedGraph = {
+      id: graph.id,
       graphName: testName,
       graphDescription: description,
       concepts: questionNodes,
@@ -106,7 +108,7 @@ function EditKnowledgeGraph(){
     }
     console.log('Edituje se:', editedGraph)
     try {
-      const response = await axios.post('http://localhost:3000/edit-knowledge-space',
+      const response = await axios.put('http://localhost:3000/knowledge-space',
         editedGraph, 
       {
         headers: {
@@ -126,14 +128,14 @@ function EditKnowledgeGraph(){
 
   const addNode = (node) => {
     const newNodeId = uuidv4();
-    setNodes([...nodes, { id: newNodeId, x: getRandomX(), y: getRandomY(), concept: node.question }]);
+    setNodes([...nodes, { key: newNodeId, x: getRandomX(), y: getRandomY(), concept: node.question }]);
 
   };
   
   const addObjectToList = (object) => {
     let fqt = 0
     createdObjectList.forEach(addedObject => {
-      if(addedObject.type === 'questionText' && object.type === 'questionText'){
+      if(addedObject.type === 'conceptText' && object.type === 'conceptText'){
         fqt = 1
         currentQT = object.userInput
         setQuestionName(currentQT)
@@ -141,7 +143,7 @@ function EditKnowledgeGraph(){
       }
     });
 
-    if(fqt === 0 && object.type === 'questionText'){
+    if(fqt === 0 && object.type === 'conceptText'){
       currentQT = object.userInput
       setQuestionName(currentQT)
       createdObjectList.push(object)
@@ -190,7 +192,7 @@ function EditKnowledgeGraph(){
       <div className="sidebarKG">
           <h3 style={{color: 'white'}}>Knowledge Graph Creator</h3>
           <HiddenFormMenu title={"Add new Concept:"} btnName={"New Concept"} 
-            typeForm={'questionText'} addObjectToList={addObjectToList} 
+            typeForm={'conceptText'} addObjectToList={addObjectToList} 
             currentState={currentQT}/>
           <div className='question-level-wrapper'>
           </div>
@@ -243,21 +245,21 @@ function EditKnowledgeGraph(){
         {links.map((link, index) => (
           <line
             key={index}
-            x1={nodes.find((node) => node.id === link.source).x}
-            y1={nodes.find((node) => node.id === link.source).y}
-            x2={nodes.find((node) => node.id === link.target).x}
-            y2={nodes.find((node) => node.id === link.target).y}
+            x1={nodes.find((node) => node.key === link.source).x}
+            y1={nodes.find((node) => node.key === link.source).y}
+            x2={nodes.find((node) => node.key === link.target).x}
+            y2={nodes.find((node) => node.key === link.target).y}
             stroke="black"
           />
         ))}
         {nodes.map((node) => (
-          <g key={node.id}>
+          <g key={node.key}>
             <circle
               cx={node.x}
               cy={node.y}
               r={20}
-              fill={selectedNode === node.id ? 'red' : '#04AA6D'}
-              onClick={() => handleNodeClick(node.id)}
+              fill={selectedNode === node.key ? 'red' : '#04AA6D'}
+              onClick={() => handleNodeClick(node.key)}
             />
             <text x={node.x} y={node.y} dy={5} textAnchor="middle">{node.concept}</text>
           </g>

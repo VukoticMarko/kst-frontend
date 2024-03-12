@@ -125,7 +125,7 @@ function KnowledgeGraph(){
   const addObjectToList = (object) => {
     let fqt = 0
     createdObjectList.forEach(addedObject => {
-      if(addedObject.type === 'questionText' && object.type === 'questionText'){
+      if(addedObject.type === 'conceptText' && object.type === 'conceptText'){
         fqt = 1
         currentQT = object.userInput
         setQuestionName(currentQT)
@@ -133,7 +133,7 @@ function KnowledgeGraph(){
       }
     });
 
-    if(fqt === 0 && object.type === 'questionText'){
+    if(fqt === 0 && object.type === 'conceptText'){
       currentQT = object.userInput
       setQuestionName(currentQT)
       createdObjectList.push(object)
@@ -183,7 +183,7 @@ function KnowledgeGraph(){
       <div className="sidebarKG">
           <h3 style={{color: 'white'}}>Knowledge Graph Creator</h3>
           <HiddenFormMenu title={"Add new Concept:"} btnName={"New Concept"} 
-            typeForm={'questionText'} addObjectToList={addObjectToList} 
+            typeForm={'conceptText'} addObjectToList={addObjectToList} 
             currentState={currentQT}/>
           <div className='question-level-wrapper'>
           </div>

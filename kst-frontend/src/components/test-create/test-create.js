@@ -353,15 +353,15 @@ function TestCreate () {
                     {links.map((link, index) => (
                       <line
                         key={index}
-                        x1={nodes.find((node) => node.id === link.source).x}
-                        y1={nodes.find((node) => node.id === link.source).y}
-                        x2={nodes.find((node) => node.id === link.target).x}
-                        y2={nodes.find((node) => node.id === link.target).y}
+                        x1={nodes.find((node) => node.key === link.source).x}
+                        y1={nodes.find((node) => node.key === link.source).y}
+                        x2={nodes.find((node) => node.key === link.target).x}
+                        y2={nodes.find((node) => node.key === link.target).y}
                         stroke="black"
                       />
                     ))}
                     {nodes.map((node) => (
-                      <g key={node.id}>
+                      <g key={node.key}>
                         <circle
                           cx={node.x}
                           cy={node.y}
