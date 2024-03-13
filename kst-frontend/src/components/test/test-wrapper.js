@@ -163,7 +163,6 @@ function TestWrapper(){
                 qId={question.id}
                 options={question.answers}
                 text={question.text}
-                disableClick={false}
                 onAnswerSelection={handleAnswerSelection}/>
                 ))}
             </div>
