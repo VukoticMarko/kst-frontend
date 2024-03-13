@@ -1,22 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './test.css';
 
-function TestOption({ qId, options, text, onAnswerSelection }) {
+function TestOption({ qId, options, text, onAnswerSelection, disableClick, selectedStudentAnswers }) {
   
-  const [optionList] = useState(options);
+  const [optionList, setOptionList] = useState(options);
   const [selectedAnswer, setSelectedAnswer] = useState(null); // For visual update
   const [questionTitle] = useState(text);
   const [question_id] = useState(qId);
-  //console.log(selectedStudentAnswers)
-  console.log(optionList)
+  console.log(selectedStudentAnswers)
+
+
+  useEffect(() => {
+    // if(selectedStudentAnswers){
+    //   selectedStudentAnswers.array.forEach(ssa => {
+    //     setSelectedAnswer(ssa.id)
+    //   });
+    // }
+  }, []);
 
   const handleAnswerSelection = (question_id, answer_id) => {
-    const answer = {
-      'question_id': question_id,
-      'answer_id': answer_id
+    setSelectedAnswer(answer_id);
+    if (onAnswerSelection) {
+      const answer = {
+        'question_id': question_id,
+        'answer_id': answer_id
+      }
+      onAnswerSelection(answer);
     }
-    setSelectedAnswer(answer_id)
-    onAnswerSelection(answer)
   };
 
   return (
@@ -27,7 +37,7 @@ function TestOption({ qId, options, text, onAnswerSelection }) {
           <div
             key={option.id}
             className={`answer ${selectedAnswer === option.id ? 'selected' : ''}`}
-            onClick={() => handleAnswerSelection(question_id, option.id)}
+            onClick={disableClick ? null : () => handleAnswerSelection(question_id, option.id)}
           >
             {option.text}
           </div>

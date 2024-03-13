@@ -9,29 +9,17 @@ function StaticTest(){
 
     const navigate = useNavigate()
     const [questions, setQuestions] = useState([])
+    const [studentAnswers, setStudentAnswers] = useState([])
     const {workId} = useParams()
     const accessToken = localStorage.getItem('accessToken')
 
-    const mapStudentAnswersToQuestions = (questions, studentAnswers) => {
-        return questions.map(question => {
-          // Find the student's answer to the current question
-          const studentAnswer = studentAnswers.find(sa => sa.question.id === question.id);
-          // If there is a student's answer, mark it as selected
-          if (studentAnswer) {
-            return {
-              ...question,
-              answers: question.answers.map(answer => ({
-                ...answer,
-                isSelected: answer.id === studentAnswer.answer.id
-              }))
-            };
-          }
-          return question;
-        });
-      };
 
     const handleBackButton = () => {
         navigate(-1);
+    };
+  
+    const initStudentAnswers = (data) => {
+      setStudentAnswers(data)
     };
 
     useEffect(() => {
@@ -45,6 +33,8 @@ function StaticTest(){
               });
               const data = response.data;
               console.log(data)
+              setQuestions(data.test.questions)
+              initStudentAnswers(data.studentAnswers)
             } catch (error) {
               console.error('Error fetching data:', error);
             }
@@ -62,6 +52,8 @@ function StaticTest(){
                 qId={question.id}
                 options={question.answers}
                 text={question.text}
+                disableClick={true}
+                selectedStudentAnswers={studentAnswers}
                 />
                 ))}
             </div>
