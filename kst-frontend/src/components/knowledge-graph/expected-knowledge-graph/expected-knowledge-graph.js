@@ -11,8 +11,8 @@ function ExpcetedKnowledgeGraph(){
   const [studentWork, setStudentWork] = useState([])
   const {courseId, testId} = useParams()
 
-  const handleDetailsClick = () => {
-    
+  const handleDetailsClick = (work) => {
+    navigate(`/studentTest/${work.id}`)
   };
 
   const generateExpectedKnowledgeGraph = async () => {
@@ -89,7 +89,7 @@ function ExpcetedKnowledgeGraph(){
               <td>{work.student.lastname}</td>
               <td></td>
               <td>
-                <button className='detail-button' onClick={() => handleDetailsClick(work.id)}>
+                <button className='detail-button' onClick={() => handleDetailsClick(work)}>
                   Details
                 </button>
               </td>

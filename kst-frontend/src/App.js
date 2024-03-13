@@ -19,6 +19,7 @@ import PostTest from './components/test-create/post-test';
 import HeaderWithoutLogo from './components/header/header-without-logo';
 import ExpcetedKnowledgeGraph from './components/knowledge-graph/expected-knowledge-graph/expected-knowledge-graph';
 import EditKnowledgeGraph from './components/knowledge-graph/edit-knowledge-graph';
+import StaticTest from './components/knowledge-graph/expected-knowledge-graph/static-test';
 
 function App() {
 
@@ -35,7 +36,12 @@ function App() {
           <div>
           <TestWrapper />
           </div>
-          } />          
+          } />
+          <Route path='/studentTest/:workId' element={
+          <div>
+          <StaticTest/>
+          </div>
+          } />             
           <Route path="/login" element={<Login setAccessToken={setAccessToken}/>} />
           <Route
           path="/"
