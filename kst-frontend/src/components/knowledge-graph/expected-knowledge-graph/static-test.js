@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TestOption from '../../test/test-option.js';
 import './static-test.css';
 import HeaderWithoutLogo from '../../header/header-without-logo';
+import TestOptionShow from './test-option-show.js';
 
 function StaticTest(){
 
@@ -47,7 +48,7 @@ function StaticTest(){
             <HeaderWithoutLogo></HeaderWithoutLogo>
             <div className='test-container'>
                 {questions.map((question) => (
-                <TestOption 
+                <TestOptionShow 
                 key={question.id} 
                 qId={question.id}
                 options={question.answers}

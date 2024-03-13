@@ -41,7 +41,6 @@ function TestWrapper(){
     };
 
     const handleAnswerSelection = (newAnswer) => {
-
         const updatedAnswers = studentAnswers.map((answer) =>
           answer.question_id === newAnswer.question_id ? newAnswer : answer
         );
@@ -50,6 +49,7 @@ function TestWrapper(){
           updatedAnswers.push(newAnswer);
         }
         setStudentAnswers(updatedAnswers);
+        console.log(studentAnswers)
     };
 
     const handleSubmitButton = () => {
@@ -163,6 +163,7 @@ function TestWrapper(){
                 qId={question.id}
                 options={question.answers}
                 text={question.text}
+                disableClick={false}
                 onAnswerSelection={handleAnswerSelection}/>
                 ))}
             </div>
