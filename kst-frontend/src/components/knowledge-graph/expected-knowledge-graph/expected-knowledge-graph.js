@@ -53,7 +53,10 @@ function ExpcetedKnowledgeGraph(){
         });
 
         const data = response.data;
-        setStudentWork(data)
+        console.log(data)
+        const testIdInt = parseInt(testId);
+        const studentWorkArray = data.filter(element => element.test.id === testIdInt);        //data.
+        setStudentWork(studentWorkArray); // Update the state with the filtered array
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -65,7 +68,7 @@ function ExpcetedKnowledgeGraph(){
   return (
     <div>
       <div className="table-container">
-      <h2 className='table-text'>Here you can see test results and generate EXPECTED KNOWLEDGE GRAPH.</h2>
+      <h2 className='table-text'>Here you can see test results and generate REAL KNOWLEDGE GRAPH.</h2>
         <table>
         <thead>
           <tr>
@@ -96,7 +99,7 @@ function ExpcetedKnowledgeGraph(){
             </tr>
           ))}
         </tbody>
-        <button className='e-kg-button' onClick={() => generateExpectedKnowledgeGraph()}>Generate E. Knowledge Graph</button>
+        <button className='e-kg-button' onClick={() => generateExpectedKnowledgeGraph()}>Generate R. Knowledge Graph</button>
         </table>
       </div>
     </div>

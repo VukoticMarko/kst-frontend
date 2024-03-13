@@ -24,6 +24,10 @@ function KnowledgeGraph(){
   const svgRef = useRef();
 
   useEffect(() => {
+    postQuestion()
+  }, [questionName]);
+
+  useEffect(() => {
 
     const updateDimensions = () => {
       const width = window.innerWidth - sidebarWidth;
@@ -138,7 +142,8 @@ function KnowledgeGraph(){
       setQuestionName(currentQT)
       createdObjectList.push(object)
     }
-  }
+    console.log(questionName)
+    }
 
   // Object removing logic
   const [selectedNodeId, setSelectedNodeId] = useState('');
@@ -199,7 +204,6 @@ function KnowledgeGraph(){
             </select>
             <button className="remove-node-button" onClick={removeSelectedNode}>Remove Node</button>
         </div>
-          <button className='finish-button' onClick={postQuestion}>Add Node</button>
           <button className='finish-test-button' onClick={postTest}>Finish Graph</button>
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
