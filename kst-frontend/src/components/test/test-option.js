@@ -7,6 +7,7 @@ function TestOption({ qId, options, text, onAnswerSelection, disableClick, selec
   const [selectedAnswer, setSelectedAnswer] = useState(null); // For visual update
   const [questionTitle] = useState(text);
   const [question_id] = useState(qId);
+  const selectedAnswerId = selectedStudentAnswers?.find(sa => sa.question.id === question_id)?.answer.id;
   console.log(selectedStudentAnswers)
 
 
@@ -36,7 +37,7 @@ function TestOption({ qId, options, text, onAnswerSelection, disableClick, selec
         {optionList.map((option) => (
           <div
             key={option.id}
-            className={`answer ${selectedAnswer === option.id ? 'selected' : ''}`}
+            className={`answer ${selectedAnswerId === option.id ? 'selected' : ''}`}
             onClick={disableClick ? null : () => handleAnswerSelection(question_id, option.id)}
           >
             {option.text}

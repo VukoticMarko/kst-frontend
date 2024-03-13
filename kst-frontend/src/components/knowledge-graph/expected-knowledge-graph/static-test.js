@@ -53,7 +53,7 @@ function StaticTest(){
                 options={question.answers}
                 text={question.text}
                 disableClick={true}
-                selectedStudentAnswers={studentAnswers}
+                selectedStudentAnswers={studentAnswers}               
                 />
                 ))}
             </div>
