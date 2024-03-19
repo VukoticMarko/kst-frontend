@@ -28,6 +28,10 @@ function KnowledgeGraph(){
   }, [questionName]);
 
   useEffect(() => {
+    setNodes([])
+  }, []);
+
+  useEffect(() => {
 
     const updateDimensions = () => {
       const width = window.innerWidth - sidebarWidth;
