@@ -64,7 +64,7 @@ function RealGraph ({answers, graph}) {
             <div className="test-name-container">
                 {graphName}
             </div>
-            <QuestionMark message="This is the Real Expected Graph for this student. Student answers are visually displayed here." />
+            <QuestionMark message="This is the Real Expected Graph for this student. Student answers are visually displayed here. Green are right answers, red are wrong answers and gray is for concepts that do not have question in this current test." />
             <svg ref={svgRef} width={svgDimensions.width} height={svgDimensions.height}>
                 {links.map((link, index) => {
                     const sourceNode = nodes.find(node => node.key === link.source);
@@ -82,12 +82,11 @@ function RealGraph ({answers, graph}) {
                     );
                 })}
                 {nodes.map((node) => {
-                    // Find if there is an incorrect answer for the current node
-                    const isAnswerIncorrect = answers.some(a => a.question.node.key === node.key && !a.answer.correct);
-
-                    // Determine the fill color based on the correctness of the answer
-                    const fillColor = isAnswerIncorrect ? 'red' : 'green';
-
+                   const answerForNode = answers.find(a => a.question.node.key === node.key);
+                   let fillColor = 'gray'; // Default to gray if no answer is found
+                   if (answerForNode) {
+                     fillColor = answerForNode.answer.correct ? 'green' : 'red';
+                   }
                     return (
                         <g key={node.key}>
                             <circle
