@@ -37,6 +37,7 @@
   box-shadow: 0 8px 16px 0 rgba(255, 99, 71, 0.5);
 }
 
+
 @media (max-width: 768px) {
   .rectangle, .create-new-graph-div {
       width: calc(50% - 20px);
@@ -48,3 +49,36 @@
       width: 100%;
   }
 }
+
+.ontology-graph-div {
+  box-shadow: 0 4px 8px 0 rgba(35, 46, 199, 0.5);
+  transition: 0.3s;
+  width: calc(33.333% - 20px);
+  height: 200px;
+  background-color: white;
+  margin: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.ontology-graph-div:hover {
+  box-shadow: 0 8px 16px 0 rgba(35, 46, 199, 0.5);
+}
+
+@media (max-width: 768px) {
+  .rectangle, .ontology-graph-div {
+      width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .rectangle, .ontology-graph-div {
+      width: 100%;
+  }
+}
+
+

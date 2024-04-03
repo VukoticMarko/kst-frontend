@@ -121,6 +121,38 @@ function KnowledgeGraph(){
     }
   };
 
+  const postTestOntology = async () => { // Finish making graph
+
+    // Gather nodes in list
+    const questionNodes = nodes.map(node => ({
+      key: node.id,
+      concept: node.concept,
+      x: node.x,
+      y: node.y,
+    }));
+    const newGraph = {
+      graphName: testName,
+      graphDescription: description,
+      concepts: questionNodes,
+      links: links
+    }
+    console.log('Postuje se:', newGraph)
+    try {
+      const response = await axios.post('http://localhost:3000/virtuoso',
+        newGraph, 
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response.data);
+      navigate('/courses')
+    } catch (error) {
+      console.error('There was an error sending the graph data:', error);
+    }
+  };
+
   const getRandomX = () => Math.random() * (svgDimensions.width - sidebarWidth);
   const getRandomY = () => Math.random() * svgDimensions.height;
 
@@ -184,6 +216,7 @@ function KnowledgeGraph(){
   const handleBackButton = () => {
     navigate('/graphs')
   }
+
   console.log('Nodes of the graph ', nodes)
   console.log('Links in the graph ', links)
   let currentQT
@@ -209,6 +242,7 @@ function KnowledgeGraph(){
             <button className="remove-node-button" onClick={removeSelectedNode}>Remove Node</button>
         </div>
           <button className='finish-test-button' onClick={postTest}>Finish Graph</button>
+          <button className='finish-ontology-button' onClick={postTestOntology}>Finish Ontology</button>
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
       </div>

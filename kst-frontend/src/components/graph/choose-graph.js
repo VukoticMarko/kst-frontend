@@ -12,6 +12,8 @@ const ChooseGraph = ({code}) => {
   // Code 2 = Creating tests flow
 
    const [graphs, setGraphs] = useState([])
+   const [ontologyGraphs, setOntologyGraphs] = useState([])
+
    const [text, setText] = useState('Choose Graph that will be used for test creation.')
    const accessToken = localStorage.getItem('accessToken')
 
@@ -92,12 +94,39 @@ const ChooseGraph = ({code}) => {
         }
       };
       fetchData();
+      
+      const fetchData2 = async () => {
+        try {
+          const response = await axios.get('http://localhost:3000/virtuoso', {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          });
+  
+          const data = response.data;
+          data.forEach(graph => {
+            // Convert graph id from string to int
+            graph.id = parseInt(graph.id, 10);
+        
+            // Replace concept.id with the data from concept.key for each concept
+            graph.concepts.forEach(concept => {
+                concept.id = concept.key;
+            });
+        });
+          setOntologyGraphs(data)
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+      fetchData2();
 
    
 
    }, []);
 
    console.log('Graphs:', graphs)
+   console.log('Ontology graphs:', ontologyGraphs)
 
    return (
     <div>
@@ -106,6 +135,14 @@ const ChooseGraph = ({code}) => {
       <div className='create-new-graph-div'><DisplayGraph graph={card} code={0}></DisplayGraph></div>
       {graphs.map((graph, index) => (
         <div key={index} className="rectangle">
+            <DisplayGraph
+            graph={graph}
+            code={code}
+            />
+          </div>
+        ))}
+        {ontologyGraphs.map((graph, index) => (
+        <div key={index} className="ontology-graph-div">
             <DisplayGraph
             graph={graph}
             code={code}

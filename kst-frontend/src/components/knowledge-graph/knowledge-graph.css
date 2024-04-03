@@ -60,17 +60,17 @@
     margin-top: 20px;
   }
   
-  .finish-button {
-    margin-top: 90px;
-    color: black;
-    background-color: rgb(196, 213, 69);
-    width: 88px;
-  }
-  
   .finish-test-button {
     margin-top: 90px;
     color: black;
     background-color: rgb(27, 110, 0);
+    width: 88px;
+  }
+
+  .finish-ontology-button {
+    margin-top: 90px;
+    color: black;
+    background-color: rgb(15, 97, 169);
     width: 88px;
   }
   
