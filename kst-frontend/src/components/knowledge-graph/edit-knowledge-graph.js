@@ -8,7 +8,8 @@ import axios from 'axios';
 
 function EditKnowledgeGraph(){
   const location = useLocation();
-  const { graph } = location.state || {};
+  const { graph, ontology = false } = location.state || {};
+  console.log(ontology)
   const [nodes, setNodes] = useState(graph.concepts);
   const [links, setLinks] = useState(graph.links);
   const [selectedNode, setSelectedNode] = useState(null);
@@ -189,6 +190,7 @@ function EditKnowledgeGraph(){
 
   return (
     <div className="kg-wrapper">
+      {!ontology && (
       <div className="sidebarKG">
           <h3 style={{color: 'white'}}>Knowledge Graph Creator</h3>
           <HiddenFormMenu title={"Add new Concept:"} btnName={"New Concept"} 
@@ -213,6 +215,13 @@ function EditKnowledgeGraph(){
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
       </div>
+      )}
+      {
+        ontology && <div className="sidebarKG">
+          <h3 style={{color: 'white'}}>Ontologies cannot be edited, only viewed.</h3>
+          <button className='back-button' onClick={handleBackButton}>Go Back</button>
+        </div>
+      }
       <div className="graph-display-container-main">
           <div className="test-name-container">
             {editingTestName ? (

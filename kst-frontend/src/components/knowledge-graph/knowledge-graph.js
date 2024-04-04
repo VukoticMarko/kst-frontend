@@ -121,7 +121,20 @@ function KnowledgeGraph(){
     }
   };
 
+   // Function to get a random integer
+   function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
   const postTestOntology = async () => { // Finish making graph
+
+    // Applying random id's to ontology graphs
+    const oGraphId = getRandomInt(50, 999999);   
+    for (let link of links) {
+      link.id = getRandomInt(1, 999999);
+    }
 
     // Gather nodes in list
     const questionNodes = nodes.map(node => ({
@@ -130,7 +143,9 @@ function KnowledgeGraph(){
       x: node.x,
       y: node.y,
     }));
+
     const newGraph = {
+      id: oGraphId,
       graphName: testName,
       graphDescription: description,
       concepts: questionNodes,

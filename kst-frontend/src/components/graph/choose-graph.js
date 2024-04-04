@@ -127,7 +127,8 @@ const ChooseGraph = ({code}) => {
 
    console.log('Graphs:', graphs)
    console.log('Ontology graphs:', ontologyGraphs)
-
+   const oFalse = false
+   const oTrue = true
    return (
     <div>
       <h2 style={{color:"green", marginTop: '75px'}}>{text}</h2>
@@ -138,6 +139,7 @@ const ChooseGraph = ({code}) => {
             <DisplayGraph
             graph={graph}
             code={code}
+            ontology={oFalse}
             />
           </div>
         ))}
@@ -146,6 +148,7 @@ const ChooseGraph = ({code}) => {
             <DisplayGraph
             graph={graph}
             code={code}
+            ontology={oTrue}
             />
           </div>
         ))}
