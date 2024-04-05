@@ -13,7 +13,7 @@ function DisplayGraph({ graph, code, ontology }) {
     const navigate = useNavigate();
     const {courseId} = useParams();
     const location = useLocation();
-    console.log('For graph', graph.graphName, 'Ontology is', ontology)
+    //console.log('For graph', graph.graphName, 'Ontology is', ontology)
 
     const handleClick = () => {
       if(code === 0){

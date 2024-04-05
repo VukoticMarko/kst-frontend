@@ -188,6 +188,53 @@ function EditKnowledgeGraph(){
   }
   let currentQT
 
+  function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  const postTestOntology = async () => { // Finish making graph
+
+    // Applying random id's to ontology graphs
+    const oGraphId = getRandomInt(50, 999999);   
+    for (let link of links) {
+      link.id = getRandomInt(1, 999999);
+    }
+
+    // Gather nodes in list
+    console.log(nodes)
+    const questionNodes = nodes.map(node => ({
+      key: node.key,
+      concept: node.concept,
+      x: node.x,
+      y: node.y,
+    }));
+
+    const newGraph = {
+      id: oGraphId,
+      graphName: testName  + ' Ontology Graph',
+      graphDescription: description,
+      concepts: questionNodes,
+      links: links
+    }
+    console.log('Postuje se:', newGraph)
+    try {
+      const response = await axios.post('http://localhost:3000/virtuoso',
+        newGraph, 
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response.data);
+      navigate('/courses')
+    } catch (error) {
+      console.error('There was an error sending the graph data:', error);
+    }
+  };
+
   return (
     <div className="kg-wrapper">
       {!ontology && (
@@ -212,6 +259,7 @@ function EditKnowledgeGraph(){
         </div>
           <button className='finish-button' onClick={postQuestion}>Add Node</button>
           <button className='finish-test-button' onClick={postTest}>Finish Editing</button>
+          <button className='finish-ontology-button' onClick={postTestOntology}>Save to Ontology</button>
           <br></br>
           <button className='back-button' onClick={handleBackButton}>Go Back</button>
       </div>
